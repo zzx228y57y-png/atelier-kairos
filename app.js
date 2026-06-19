@@ -4,6 +4,15 @@
    simplement le contenu par défaut déjà présent dans le HTML. */
 
 (function () {
+  // En mode édition (page /admin dans un cadre), c'est l'éditeur qui pilote
+  // l'affichage : on n'applique pas les fichiers ici pour éviter les conflits.
+  try {
+    if (new URLSearchParams(location.search).get("edit") === "1" && window.parent !== window) {
+      document.documentElement.setAttribute("data-edit-mode", "1");
+      return;
+    }
+  } catch (e) {}
+
   const bust = "?v=" + Date.now(); // évite le cache lors des mises à jour
 
   // ---------- THÈME (couleurs + polices) ----------

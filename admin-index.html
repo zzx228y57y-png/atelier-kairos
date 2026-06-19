@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Éditeur — Atelier Kairos</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--terra:#C97A61;--cacao:#6B4F43;--coq:#F8F5F1;--sable:#E7D7C3;--texte:#4A3A31}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:'Lato',sans-serif;background:#efe7df;color:var(--texte);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+  .toolbar{background:var(--cacao);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 16px;flex-wrap:wrap}
+  .toolbar .brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-right:8px;white-space:nowrap}
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+  .tab{background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:50px;padding:7px 14px;font:inherit;font-size:.85rem;cursor:pointer}
+  .tab.active{background:#fff;color:var(--cacao);font-weight:700}
+  .btn{border:none;border-radius:50px;padding:9px 18px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+  .btn-theme{background:rgba(255,255,255,.15);color:#fff}
+  .btn-pub{background:var(--terra);color:#fff}
+  .btn-pub:disabled{opacity:.5;cursor:not-allowed}
+  .hintbar{background:#fff5ef;color:#8a6d5e;font-size:.82rem;padding:6px 16px;text-align:center;border-bottom:1px solid #ecdfd5}
+  .stage{flex:1;position:relative;overflow:hidden;background:#e3d8cd}
+  iframe{width:100%;height:100%;border:none;background:#fff}
+  #status{font-size:.82rem;opacity:.9;min-width:120px;text-align:right}
+  .ok{color:#bfe3b0}.err{color:#ffb4ae}
+  /* Panneau thème */
+  .panel{position:absolute;top:0;right:0;height:100%;width:300px;background:#fff;box-shadow:-6px 0 24px rgba(0,0,0,.12);transform:translateX(100%);transition:transform .25s;overflow:auto;padding:20px;z-index:20}
+  .panel.open{transform:none}
+  .panel h3{font-family:'Cormorant Garamond',serif;color:var(--cacao);margin:0 0 14px;font-size:1.4rem}
+  .panel label{display:block;font-size:.8rem;font-weight:700;color:var(--cacao);margin:12px 0 4px}
+  .panel .row{display:flex;align-items:center;gap:8px}
+  .panel input[type=color]{width:46px;height:34px;border:1px solid #ccc;border-radius:6px;padding:0}
+  .panel input[type=text],.panel select{width:100%;padding:8px;border:1px solid #d9cdc4;border-radius:7px;font:inherit}
+  .panel .close{float:right;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#999}
+  /* Dialogue image */
+  .modal{position:fixed;inset:0;background:rgba(40,30,25,.5);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal.open{display:flex}
+  .modal .box{background:#fff;border-radius:14px;padding:24px;width:90%;max-width:420px}
+  .modal h3{font-family:'Cormorant Garamond',serif;color:var(--cacao);margin:0 0 12px}
+  .modal input[type=text]{width:100%;padding:10px;border:1px solid #d9cdc4;border-radius:8px;font:inherit;margin-bottom:10px}
+  .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}
+  .modal .ghost{background:#eee;color:#555}
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <span class="brand">Éditeur</span>
+    <div class="tabs" id="tabs"></div>
+    <button class="btn btn-theme" id="themeBtn">🎨 Couleurs & polices</button>
+    <span id="status">Chargement…</span>
+    <button class="btn btn-pub" id="pubBtn" disabled>Publier le site</button>
+  </div>
+  <div class="hintbar">Cliquez sur un <b>texte</b> pour le modifier, sur une <b>photo</b> pour la remplacer. Puis « Publier le site ».</div>
+  <div class="stage">
+    <iframe id="frame" title="Aperçu du site"></iframe>
+    <div class="panel" id="panel">
+      <button class="close" id="panelClose">×</button>
+      <h3>Couleurs & polices</h3>
+      <div id="themeFields"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="imgModal">
+    <div class="box">
+      <h3>Changer la photo</h3>
+      <label style="font-size:.8rem;font-weight:700">Adresse d'une image (lien)</label>
+      <input type="text" id="imgUrl" placeholder="https://…">
+      <label style="font-size:.8rem;font-weight:700">…ou téléverser depuis l'appareil</label>
+      <input type="file" id="imgFile" accept="image/*">
+      <div class="actions">
+        <button class="btn ghost" id="imgCancel">Annuler</button>
+        <button class="btn btn-pub" id="imgOk">Valider</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const PAGES = [
+  {file:"index.html", label:"Accueil"},
+  {file:"accompagnements.html", label:"Accompagnements"},
+  {file:"seances.html", label:"Séances"},
+  {file:"contact.html", label:"Contact"},
+  {file:"temoignages.html", label:"Témoignages"},
+  {file:"faq.html", label:"FAQ"},
+];
+const THEME_FIELDS = [
+  {k:"couleur_terracotta",label:"Terracotta (boutons)",type:"color"},
+  {k:"couleur_cacao",label:"Cacao (titres)",type:"color"},
+  {k:"couleur_coquillage",label:"Fond clair",type:"color"},
+  {k:"couleur_sable",label:"Sable",type:"color"},
+  {k:"couleur_beige_rose",label:"Beige rosé",type:"color"},
+  {k:"couleur_flamant",label:"Rose flamant",type:"color"},
+  {k:"couleur_ocean",label:"Bleu océan",type:"color"},
+  {k:"couleur_sauge",label:"Vert sauge",type:"color"},
+  {k:"police_titres",label:"Police des titres",type:"select",options:["Cormorant Garamond","Playfair Display","Lora","EB Garamond"]},
+  {k:"police_textes",label:"Police des textes",type:"select",options:["Lato","Open Sans","Nunito Sans","Source Sans 3"]},
+];
+const CSSVAR = {couleur_terracotta:"--terracotta",couleur_sable:"--sable",couleur_beige_rose:"--beige-rose",couleur_coquillage:"--coquillage",couleur_cacao:"--cacao",couleur_flamant:"--flamant",couleur_ocean:"--ocean",couleur_sauge:"--sauge"};
+
+let CONTENT = {}, THEME = {};
+const pendingImages = [];
+let current = 0;
+let imgTarget = null; // {key, el, kind}
+
+const $ = (id)=>document.getElementById(id);
+function setStatus(m,c){ const s=$("status"); s.textContent=m; s.className=c||""; }
+
+async function boot(){
+  const bust = "?v="+Date.now();
+  try{ CONTENT = await (await fetch("/content.json"+bust)).json(); }catch(e){ CONTENT={}; }
+  try{ THEME = await (await fetch("/theme.json"+bust)).json(); }catch(e){ THEME={}; }
+  buildTabs(); buildThemePanel();
+  loadPage(0);
+  setStatus("Prêt."); $("pubBtn").disabled=false;
+}
+
+function buildTabs(){
+  $("tabs").innerHTML = PAGES.map((p,i)=>`<button class="tab ${i===0?'active':''}" data-i="${i}">${p.label}</button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+    current = +b.dataset.i;
+    $("tabs").querySelectorAll(".tab").forEach(x=>x.classList.toggle("active", x===b));
+    loadPage(current);
+  }));
+}
+
+function loadPage(i){
+  const f = $("frame");
+  f.onload = ()=>{ try{ decorate(f.contentDocument); }catch(e){ console.error(e); } };
+  f.src = "/" + PAGES[i].file + "?edit=1";
+}
+
+function assombrir(hex,amt){try{const c=hex.replace("#","");const r=Math.max(0,Math.round(parseInt(c.substr(0,2),16)*(1-amt)));const g=Math.max(0,Math.round(parseInt(c.substr(2,2),16)*(1-amt)));const b=Math.max(0,Math.round(parseInt(c.substr(4,2),16)*(1-amt)));return "#"+[r,g,b].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return hex}}
+
+function applyTheme(doc){
+  const rs = doc.documentElement.style;
+  Object.keys(CSSVAR).forEach(k=>{ if(THEME[k]) rs.setProperty(CSSVAR[k], THEME[k]); });
+  if(THEME.couleur_terracotta) rs.setProperty("--terracotta-fonce", assombrir(THEME.couleur_terracotta,0.12));
+  const t=THEME.police_titres, x=THEME.police_textes;
+  if(t||x){
+    const fam=[];
+    if(t) fam.push(t.replace(/ /g,"+")+":ital,wght@0,400;0,500;0,600;1,500");
+    if(x&&x!==t) fam.push(x.replace(/ /g,"+")+":wght@300;400;700");
+    let l=doc.getElementById("police-dyn"); if(!l){l=doc.createElement("link");l.id="police-dyn";l.rel="stylesheet";doc.head.appendChild(l);}
+    l.href="https://fonts.googleapis.com/css2?family="+fam.join("&family=")+"&display=swap";
+    if(t) rs.setProperty("--titre","'"+t+"', Georgia, serif");
+    if(x) rs.setProperty("--corps","'"+x+"', -apple-system, sans-serif");
+  }
+}
+
+function applyContent(doc){
+  doc.querySelectorAll("[data-edit]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit")]; if(typeof v==="string"&&v.length) el.innerHTML=v;});
+  doc.querySelectorAll("[data-edit-bg]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-bg")]; if(typeof v==="string"&&v.length) el.style.backgroundImage="url('"+v+"')";});
+  doc.querySelectorAll("[data-edit-src]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-src")]; if(typeof v==="string"&&v.length) el.setAttribute("src",v);});
+  doc.querySelectorAll("[data-edit-href]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-href")]; if(typeof v==="string"&&v.length) el.setAttribute("href",v);});
+}
+
+function decorate(doc){
+  applyTheme(doc); applyContent(doc);
+  // styles d'édition
+  const st=doc.createElement("style");
+  st.textContent=`[data-edit]{outline:1px dashed rgba(201,122,97,.5);outline-offset:3px;cursor:text;transition:background .15s}
+  [data-edit]:hover{background:rgba(201,122,97,.12)}
+  [data-edit]:focus{outline:2px solid #C97A61;background:rgba(201,122,97,.08)}
+  [data-edit-bg],[data-edit-src]{cursor:pointer;position:relative}
+  [data-edit-bg]:hover,[data-edit-src]:hover{outline:3px solid #C97A61;outline-offset:-3px}`;
+  doc.head.appendChild(st);
+  // empêcher la navigation pendant l'édition
+  doc.addEventListener("click",(e)=>{
+    const a=e.target.closest("a,button");
+    if(a && !a.closest("[data-edit-bg]") && !a.closest("[data-edit-src]")){ e.preventDefault(); e.stopPropagation(); }
+  }, true);
+  // textes éditables
+  doc.querySelectorAll("[data-edit]").forEach(el=>{
+    el.setAttribute("contenteditable","true");
+    el.addEventListener("input",()=>{ CONTENT[el.getAttribute("data-edit")] = el.innerHTML.trim(); });
+  });
+  // images cliquables
+  doc.querySelectorAll("[data-edit-bg],[data-edit-src]").forEach(el=>{
+    el.addEventListener("click",(e)=>{ e.preventDefault(); e.stopPropagation();
+      const kind = el.hasAttribute("data-edit-bg") ? "bg" : "src";
+      openImg(el.getAttribute(kind==="bg"?"data-edit-bg":"data-edit-src"), el, kind);
+    }, true);
+  });
+}
+
+/* ---- Panneau thème ---- */
+function buildThemePanel(){
+  $("themeFields").innerHTML = THEME_FIELDS.map(f=>{
+    if(f.type==="color") return `<label>${f.label}</label><div class="row"><input type="color" data-tk="${f.k}" value="${THEME[f.k]||'#000000'}"><input type="text" data-tk="${f.k}__hex" value="${THEME[f.k]||''}"></div>`;
+    if(f.type==="select") return `<label>${f.label}</label><select data-tk="${f.k}">${f.options.map(o=>`<option ${o===THEME[f.k]?'selected':''}>${o}</option>`).join("")}</select>`;
+    return "";
+  }).join("");
+  $("themeFields").querySelectorAll("[data-tk]").forEach(inp=>{
+    inp.addEventListener("input",()=>{
+      const k=inp.dataset.tk;
+      if(k.endsWith("__hex")){ const base=k.replace("__hex",""); if(/^#[0-9a-fA-F]{6}$/.test(inp.value)){THEME[base]=inp.value; const ci=document.querySelector(`[data-tk="${base}"]`); if(ci)ci.value=inp.value;} }
+      else { THEME[k]=inp.value; const hx=document.querySelector(`[data-tk="${k}__hex"]`); if(hx)hx.value=inp.value; }
+      try{ applyTheme($("frame").contentDocument); }catch(e){}
+    });
+  });
+}
+$("themeBtn").addEventListener("click",()=>$("panel").classList.toggle("open"));
+$("panelClose").addEventListener("click",()=>$("panel").classList.remove("open"));
+
+/* ---- Dialogue image ---- */
+function openImg(cur, el, kind){
+  imgTarget = { el, kind, key: el.getAttribute(kind==="bg"?"data-edit-bg":"data-edit-src") };
+  $("imgUrl").value = (cur&&cur.indexOf("data:")!==0)?cur:"";
+  $("imgFile").value="";
+  $("imgModal").classList.add("open");
+}
+$("imgCancel").addEventListener("click",()=>$("imgModal").classList.remove("open"));
+$("imgOk").addEventListener("click",()=>{
+  if(!imgTarget) return;
+  const file=$("imgFile").files[0];
+  const apply=(val)=>{
+    CONTENT[imgTarget.key]=val;
+    if(imgTarget.kind==="bg") imgTarget.el.style.backgroundImage="url('"+val+"')";
+    else imgTarget.el.setAttribute("src",val);
+    $("imgModal").classList.remove("open");
+  };
+  if(file){
+    const r=new FileReader();
+    r.onload=()=>{ const b64=String(r.result).split(",")[1]; const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_"); pendingImages.push({name:safe,data:b64}); apply("/images/"+safe); };
+    r.readAsDataURL(file);
+  } else if($("imgUrl").value.trim()){
+    apply($("imgUrl").value.trim());
+  } else { $("imgModal").classList.remove("open"); }
+});
+
+/* ---- Publier ---- */
+$("pubBtn").addEventListener("click",async ()=>{
+  const b=$("pubBtn"); b.disabled=true; setStatus("Publication…");
+  try{
+    const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({content:CONTENT,theme:THEME,images:pendingImages.map(i=>({name:i.name,data:i.data}))})});
+    const j=await r.json();
+    if(j.ok){ setStatus("✓ Publié ! Mise à jour en ligne dans 1–2 min.","ok"); pendingImages.length=0; }
+    else setStatus("Erreur : "+(j.error||"?"),"err");
+  }catch(e){ setStatus("Erreur réseau : "+e.message,"err"); }
+  finally{ b.disabled=false; }
+});
+
+boot();
+</script>
+</body>
+</html>
