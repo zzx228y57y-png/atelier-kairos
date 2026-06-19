@@ -35,7 +35,7 @@
   .blk .inner p{margin:0}
   .blk.image .inner{padding:0;display:flex;align-items:center;justify-content:center;background:#ece4dc;color:#b9a796;font-size:1.6rem}
   .blk.image img{width:100%;height:100%;object-fit:cover;display:block}
-  .blk.button .inner{display:flex;align-items:center;justify-content:center;background:none}
+  .blk.bouton .inner{display:flex;align-items:center;justify-content:flex-start;background:none;padding:8px 12px}
   .blk .bar{position:absolute;top:-15px;right:6px;display:none;gap:4px;background:#6B4F43;border-radius:7px;padding:3px;z-index:8;box-shadow:0 3px 10px rgba(0,0,0,.18)}
   .blk:hover .bar,.blk.sel .bar{display:flex}
   .blk .bar button{background:rgba(255,255,255,.18);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;padding:0}
@@ -125,6 +125,7 @@ function makeBlock(type,left,top){
   el.innerHTML='<div class="move"></div><div class="inner">'+inner+'</div>'+
     '<div class="bar"><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button></div>'+
     '<div class="rs" title="Redimensionner"></div>';
+  el.style.zIndex=++ZTOP;
   canvas.appendChild(el);
   wireBlock(el);
   refreshEmpty();
@@ -158,7 +159,7 @@ function wireBlock(el){
   });
 }
 
-let selEl=null, ZTOP=10;
+let selEl=null, ZTOP=100, ZBOT=100;
 function select(el){if(selEl)selEl.classList.remove("sel");selEl=el;if(el)el.classList.add("sel");buildInsp(el);}
 canvas.addEventListener("pointerdown",e=>{if(e.target===canvas||e.target.id==="empty")select(null);});
 
@@ -228,7 +229,7 @@ function wireInsp(el,type){
   if(q("bg"))q("bg").addEventListener("input",e=>{el.style.backgroundColor=e.target.value;});
   if(q("bgReset"))q("bgReset").addEventListener("click",()=>{el.style.backgroundColor="";buildInsp(el);});
   if(q("front"))q("front").addEventListener("click",()=>{el.style.zIndex=++ZTOP;});
-  if(q("back"))q("back").addEventListener("click",()=>{el.style.zIndex=-(++ZTOP);});
+  if(q("back"))q("back").addEventListener("click",()=>{el.style.zIndex=(ZBOT=Math.max(1,ZBOT-1));});
   if(q("dup"))q("dup").addEventListener("click",()=>dupBlock(el));
   if(q("del"))q("del").addEventListener("click",()=>{el.remove();select(null);refreshEmpty();});
 }
