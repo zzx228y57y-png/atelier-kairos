@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bac à sable — Atelier Kairos</title>
+<title>Composer les pages — Atelier Kairos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
@@ -71,7 +71,16 @@
 <body>
   <div class="top">
     <span class="logo">Atelier Kairos</span><span class="beta">beta</span>
-    <span class="hint">Bac à sable — testez librement, <b>rien n'est publié</b>.</span>
+    <span class="hint">Page&nbsp;:</span>
+    <select id="pageSel" style="height:36px;border:1px solid var(--line);border-radius:9px;padding:0 10px;font:inherit;font-size:.85rem;background:#fff;color:var(--ink);cursor:pointer">
+      <option value="index.html">Accueil</option>
+      <option value="accompagnements.html">Mes accompagnements</option>
+      <option value="seances.html">Déroulement des séances</option>
+      <option value="contact.html">Contact &amp; Tarifs</option>
+      <option value="temoignages.html">Témoignages</option>
+      <option value="faq.html">FAQ</option>
+    </select>
+    <span class="hint" style="margin-left:6px">Les blocs s'ajoutent <b>en bas</b> de la page.</span>
     <span class="sp"></span>
     <span id="pubState" class="hint"></span>
     <button id="clearBtn">Tout effacer</button>
@@ -260,9 +269,9 @@ document.querySelectorAll(".chip").forEach(chip=>{
 document.getElementById("clearBtn").addEventListener("click",()=>{if(confirm("Tout effacer ?")){canvas.querySelectorAll(".blk").forEach(b=>b.remove());refreshEmpty();}});
 window.addEventListener("resize",refreshEmpty);
 
-/* ===== Chargement / sérialisation / publication ===== */
-const TARGET="atelier.html";
-let ALLBLOCKS={};
+/* ===== Chargement / sérialisation / publication (zones sur pages existantes) ===== */
+let TARGET=document.getElementById("pageSel").value, ALLBLOCKS={};
+function currentZone(){const p=ALLBLOCKS[TARGET];return p&&p.zones&&p.zones[0]?p.zones[0]:null;}
 function loadBlock(b){
   const el=makeBlock(b.t,0,0);const W=canvas.clientWidth;
   el.style.left=(b.x/100*W)+"px";el.style.top=(b.y||0)+"px";
@@ -271,34 +280,46 @@ function loadBlock(b){
   const inner=el.querySelector(".inner");if(b.is)inner.style.cssText=b.is;if(typeof b.html==="string")inner.innerHTML=b.html;
   return el;
 }
-function serialize(){
-  const W=canvas.clientWidth||1100;let maxB=360;
+function serializeBlocks(){
+  const W=canvas.clientWidth||1100;let maxB=200;
   const blocks=[...canvas.querySelectorAll(".blk")].map(el=>{
     const inner=el.querySelector(".inner");const tmp=inner.cloneNode(true);tmp.querySelectorAll("[contenteditable]").forEach(n=>n.removeAttribute("contenteditable"));
     const y=Math.round(parseFloat(el.style.top)||0),h=Math.round(parseFloat(el.style.height)||80);maxB=Math.max(maxB,y+h);
     return {t:blockType(el),x:+(parseFloat(el.style.left)/W*100).toFixed(2),y:y,w:+(parseFloat(el.style.width)/W*100).toFixed(2),h:h,z:parseInt(el.style.zIndex)||1,bg:el.style.backgroundColor||"",is:inner.getAttribute("style")||"",html:tmp.innerHTML};
   });
-  return {free:true,h:maxB+60,blocks:blocks};
+  return {blocks:blocks,h:maxB+50};
 }
-async function loadTarget(){
+function clearCanvas(){canvas.querySelectorAll(".blk").forEach(b=>b.remove());select(null);refreshEmpty();}
+function loadZoneToCanvas(){
+  clearCanvas();const z=currentZone();
+  if(z&&z.blocks)z.blocks.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);
+  refreshEmpty();
+}
+async function loadAll(){
   try{const r=await fetch("/blocks.json?v="+Date.now());ALLBLOCKS=r.ok?await r.json():{};}catch(e){ALLBLOCKS={};}
-  const p=ALLBLOCKS[TARGET];
-  if(p&&p.blocks){canvas.querySelectorAll(".blk").forEach(b=>b.remove());p.blocks.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);refreshEmpty();}
+  if(!ALLBLOCKS||typeof ALLBLOCKS!=="object")ALLBLOCKS={};
+  loadZoneToCanvas();
 }
 async function publish(){
   const btn=document.getElementById("pubBtn"),st=document.getElementById("pubState");
   btn.disabled=true;btn.textContent="Publication…";st.textContent="";
   try{
-    ALLBLOCKS[TARGET]=serialize();
+    const ser=serializeBlocks();const prev=currentZone();
+    if(!ser.blocks.length){ delete ALLBLOCKS[TARGET]; }
+    else { ALLBLOCKS[TARGET]={zones:[{id:(prev&&prev.id)||"z"+uid(),pos:999,h:ser.h,blocks:ser.blocks}]}; }
     const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({blocks:ALLBLOCKS})});
     const j=await r.json();
-    if(j.ok){st.textContent="✓ Publié — visible en ligne dans 1–2 min";st.style.color="#2e7d52";}
+    if(j.ok){st.textContent="✓ Publié sur « "+document.getElementById("pageSel").selectedOptions[0].text+" » — en ligne dans 1–2 min";st.style.color="#2e7d52";}
     else{st.textContent="Erreur : "+(j.error||"inconnue");st.style.color="#c0392b";}
   }catch(e){st.textContent="Erreur réseau";st.style.color="#c0392b";}
   btn.disabled=false;btn.textContent="Publier";
 }
+document.getElementById("pageSel").addEventListener("change",e=>{
+  if(canvas.querySelector(".blk")&&!confirm("Changer de page ? Les blocs non publiés de la page en cours seront perdus.")){e.target.value=TARGET;return;}
+  TARGET=e.target.value;document.getElementById("pubState").textContent="";loadZoneToCanvas();
+});
 document.getElementById("pubBtn").addEventListener("click",publish);
-loadTarget();
+loadAll();
 </script>
 </body>
 </html>
