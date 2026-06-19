@@ -317,7 +317,7 @@ $("imgOk").addEventListener("click",()=>{if($("imgUrl").value.trim())applyImg($(
 
 async function publish(){if(!dirty)return;const b=$("pubBtn");b.disabled=true;b.textContent="Publication…";$("saveState").textContent="Publication…";
   try{const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({overrides:OVR,theme:THEME,images:pendingImages.map(i=>({name:i.name,data:i.data}))})});const j=await r.json();
-    if(j.ok){pendingImages=[];history=[];$("undoBtn").disabled=true;clean();toast("✓ Publié ! Mise à jour en ligne dans 1–2 min.","ok",' <a href="/" target="_blank">Voir le site</a>');}
+    if(j.ok){pendingImages=[];history=[];$("undoBtn").disabled=true;clean();toast("✓ Publié"+(j.backup?" — sauvegarde "+j.backup+" créée":"")+" ! Mise à jour dans 1–2 min.","ok",' <a href="/" target="_blank">Voir le site</a>');}
     else{toast("Erreur : "+(j.error||"inconnue"),"err");markDirty();}
   }catch(e){toast("Erreur réseau : "+e.message,"err");markDirty();}}
 $("pubBtn").addEventListener("click",publish);
