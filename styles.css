@@ -116,6 +116,15 @@ p{margin-bottom:1.1rem;}
 .brand__logo{height:46px;width:46px;flex:none;display:block;border-radius:10px;}
 .brand__text{display:flex;flex-direction:column;line-height:1;}
 @media (max-width:880px){ .brand__logo{height:40px;width:40px;} }
+
+/* ===== Blocs déplaçables (grille responsive) ===== */
+.kx-zone{padding:34px 0}
+.kx-zone .kx-grid{max-width:1120px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(12,1fr);gap:22px;align-items:start}
+.kx-block{min-width:0}
+.kx-block img{width:100%;height:auto;display:block;border-radius:14px}
+.kx-block p{margin:0 0 10px}
+.kx-block h2,.kx-block h3{margin:0 0 10px}
+@media (max-width:760px){.kx-zone .kx-grid{grid-template-columns:1fr}.kx-block{grid-column:1 / -1 !important}}
 .brand__name{font-family:var(--titre);font-size:1.5rem;font-weight:600;color:var(--cacao);letter-spacing:.02em;}
 .brand__tag{font-size:.62rem;text-transform:uppercase;letter-spacing:.28em;color:var(--terracotta);margin-top:5px;}
 

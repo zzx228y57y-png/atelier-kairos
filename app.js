@@ -129,9 +129,42 @@
     });
   }
 
+  // ---------- BLOCS déplaçables (texte / image / bouton, grille responsive) ----------
+  // blocks.json : { "index.html": [ { id, pos, blocks:[ {id,type,w,html|src|alt|label|href} ] } ] }
+  function sectionAnchors() {
+    return [].slice.call(document.body.children).filter(function (el) {
+      return el.matches && el.matches("section, .hero, .page-hero, .cta-band");
+    });
+  }
+  function construireBloc(b) {
+    var el = document.createElement("div");
+    el.className = "kx-block kx-b-" + b.type;
+    el.setAttribute("data-bid", b.id);
+    el.style.gridColumn = "span " + (b.w || 6);
+    if (b.type === "text") { el.innerHTML = b.html || ""; }
+    else if (b.type === "image") { var im = document.createElement("img"); im.src = b.src || ""; im.alt = b.alt || ""; el.appendChild(im); }
+    else if (b.type === "button") { var a = document.createElement("a"); a.className = "btn"; a.href = b.href || "#"; a.textContent = b.label || "Bouton"; el.appendChild(a); }
+    return el;
+  }
+  function renderZones(zones) {
+    [].slice.call(document.querySelectorAll(".kx-zone")).forEach(function (z) { z.remove(); });
+    if (!zones || !zones.length) return;
+    var anchors = sectionAnchors();
+    zones.forEach(function (z) {
+      var zone = document.createElement("div"); zone.className = "kx-zone"; zone.setAttribute("data-zid", z.id);
+      var grid = document.createElement("div"); grid.className = "kx-grid"; zone.appendChild(grid);
+      (z.blocks || []).forEach(function (b) { grid.appendChild(construireBloc(b)); });
+      var pos = z.pos | 0;
+      if (pos <= 0) { if (anchors[0]) anchors[0].parentNode.insertBefore(zone, anchors[0]); else document.body.appendChild(zone); }
+      else if (pos >= anchors.length) { var last = anchors[anchors.length - 1]; if (last) last.parentNode.insertBefore(zone, last.nextSibling); else document.body.appendChild(zone); }
+      else { var ref = anchors[pos]; ref.parentNode.insertBefore(zone, ref); }
+    });
+  }
+
   function appliquerTout() {
     charger("content.json").then(appliquerContenu).then(function () {
       charger("overrides.json").then(appliquerOverrides);
+      charger("blocks.json").then(function (bl) { if (bl) try { renderZones(bl[pageName()]); } catch (e) {} });
     });
   }
 
