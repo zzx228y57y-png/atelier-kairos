@@ -117,6 +117,7 @@
   <div class="body">
     <div class="rail">
       <button data-tab="pages" class="on"><span>📄</span><span class="lab">Pages</span></button>
+      <button data-tab="blocs"><span>▦</span><span class="lab">Blocs</span></button>
       <button data-tab="design"><span>🎨</span><span class="lab">Design</span></button>
       <button data-tab="aide"><span>❔</span><span class="lab">Aide</span></button>
     </div>
@@ -218,7 +219,7 @@ async function boot(){
   loadPage(0);
 }
 
-document.querySelectorAll(".rail button").forEach(b=>b.addEventListener("click",()=>{const t=b.dataset.tab;document.querySelectorAll(".rail button").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll("[data-panel]").forEach(p=>p.style.display=p.dataset.panel===t?"block":"none");$("side").classList.add("open");}));
+document.querySelectorAll(".rail button").forEach(b=>b.addEventListener("click",()=>{const t=b.dataset.tab;if(t==="blocs"){location.href="/admin/builder.html";return;}document.querySelectorAll(".rail button").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll("[data-panel]").forEach(p=>p.style.display=p.dataset.panel===t?"block":"none");$("side").classList.add("open");}));
 function renderPages(){$("pagesList").innerHTML=PAGES.map((p,i)=>`<div class="nav-item ${i===0?'on':''}" data-i="${i}">📄 ${p.label}</div>`).join("");$("pagesList").querySelectorAll(".nav-item").forEach(el=>el.addEventListener("click",()=>{current=+el.dataset.i;$("pagesList").querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("on",x===el));closeInsp();loadPage(current);}));}
 $("dDesk").addEventListener("click",()=>dev(""));$("dTab").addEventListener("click",()=>dev("tablet"));$("dPhone").addEventListener("click",()=>dev("phone"));
 function dev(m){$("canvas").className="canvas"+(m?" "+m:"");$("dDesk").classList.toggle("on",!m);$("dTab").classList.toggle("on",m==="tablet");$("dPhone").classList.toggle("on",m==="phone");}
