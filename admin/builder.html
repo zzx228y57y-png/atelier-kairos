@@ -18,6 +18,7 @@
   .top .sp{flex:1}
   .top button{background:none;border:1px solid var(--line);border-radius:9px;height:36px;padding:0 14px;cursor:pointer;font:inherit;font-size:.85rem;color:var(--ink)}
   .top button:hover{background:var(--soft)}
+  .top button:disabled{opacity:.4;cursor:default}
   .top button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
   .top button.primary:hover{background:#b86b53}
   .top button.primary:disabled{opacity:.6;cursor:default}
@@ -52,6 +53,9 @@
   .blk.separateur .inner{display:flex;align-items:center;padding:0 6px}
   .blk.separateur .sepline{width:100%;height:2px;background:#d9c8ba;border-radius:2px}
   .blk.espace .inner{border:1px dashed #e7ddd4;border-radius:8px}
+  .blk.video .inner{display:flex;align-items:center;justify-content:center;background:#1d1714;color:#fff;text-align:center;border-radius:inherit;font-size:1.4rem}
+  .blk.video .inner small{font-size:.72rem;opacity:.8}
+  .blk.video iframe{width:100%;height:100%;border:0;display:block;border-radius:inherit}
   .insp{width:256px;flex:none;background:#fff;border-left:1px solid var(--line);padding:16px;overflow:auto;display:none}
   .insp.open{display:block}
   .insp h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
@@ -84,6 +88,8 @@
     <span class="hint" style="margin-left:6px">Les blocs s'ajoutent <b>en bas</b> de la page.</span>
     <span class="sp"></span>
     <span id="pubState" class="hint"></span>
+    <button id="undoBtn" title="Annuler (⌘Z)" disabled>↶</button>
+    <button id="redoBtn" title="Rétablir (⌘⇧Z)" disabled>↷</button>
     <button id="clearBtn">Tout effacer</button>
     <button id="pubBtn" class="primary">Publier</button>
   </div>
@@ -94,6 +100,7 @@
       <div class="chip" draggable="false" data-t="texte"><span class="ic">¶</span> Texte</div>
       <div class="chip" draggable="false" data-t="image"><span class="ic">🖼</span> Image</div>
       <div class="chip" draggable="false" data-t="bouton"><span class="ic">⬭</span> Bouton</div>
+      <div class="chip" draggable="false" data-t="video"><span class="ic">▶</span> Vidéo</div>
       <div class="chip" draggable="false" data-t="separateur"><span class="ic">―</span> Séparateur</div>
       <div class="chip" draggable="false" data-t="espace"><span class="ic">⬚</span> Espace</div>
       <div class="note">Glissez un bloc sur la page →<br><br>• Déplacez-le en le tirant.<br>• Redimensionnez via le carré en bas à droite.<br>• Cliquez un bloc pour ouvrir ses réglages →</div>
@@ -127,6 +134,7 @@ function makeBlock(type,left,top){
   if(type==="image"){cw=4;rh=5;}
   if(type==="separateur"){cw=8;rh=1;}
   if(type==="espace"){cw=12;rh=2;}
+  if(type==="video"){cw=6;rh=5;}
   el.style.width=(cw*w)+"px";
   el.style.height=(rh*ROW)+"px";
   el.style.left=clamp(snap(left,w),0,(COLS-cw)*w)+"px";
@@ -138,6 +146,7 @@ function makeBlock(type,left,top){
   else if(type==="bouton")inner='<a class="btn" contenteditable="true">Bouton</a>';
   else if(type==="separateur")inner='<div class="sepline"></div>';
   else if(type==="espace")inner='';
+  else if(type==="video")inner='<div>▶<br><small>Ajoutez un lien YouTube/Vimeo dans les réglages →</small></div>';
   el.innerHTML='<div class="move"></div><div class="inner">'+inner+'</div>'+
     '<div class="bar"><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button></div>'+
     '<div class="rs" title="Redimensionner"></div>';
@@ -181,7 +190,10 @@ canvas.addEventListener("pointerdown",e=>{if(e.target===canvas||e.target.id==="e
 
 /* ===== Panneau de réglages ===== */
 const SIZES=[["Petit","16px"],["Normal","20px"],["Moyen","26px"],["Grand","34px"],["Très grand","46px"]];
-function blockType(el){return ["titre","texte","image","bouton","separateur","espace"].find(c=>el.classList.contains(c));}
+function blockType(el){return ["titre","texte","image","bouton","separateur","espace","video"].find(c=>el.classList.contains(c));}
+function ytId(u){const m=(u||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{6,})/);return m?m[1]:null;}
+function vimeoId(u){const m=(u||"").match(/vimeo\.com\/(?:video\/)?(\d+)/);return m?m[1]:null;}
+function setVideo(el,url){const inner=el.querySelector(".inner");url=(url||"").trim();if(!url){inner.innerHTML='<div>▶<br><small>Ajoutez un lien YouTube/Vimeo dans les réglages →</small></div>';return;}let src=url;const y=ytId(url),v=vimeoId(url);if(y)src="https://www.youtube.com/embed/"+y;else if(v)src="https://player.vimeo.com/video/"+v;inner.innerHTML='<iframe src="'+src+'" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';}
 function labelOf(t){return {titre:"Titre",texte:"Texte",image:"Image",bouton:"Bouton",separateur:"Séparateur",espace:"Espace"}[t]||"Bloc";}
 function getC(el){const t=blockType(el);if(t==="titre")return el.querySelector("h2");if(t==="texte")return el.querySelector("p");if(t==="bouton")return el.querySelector("a.btn");return el.querySelector(".inner");}
 function toHex(c){if(!c)return"";if(c[0]==="#")return c;const m=(""+c).match(/\d+/g);if(!m)return"";return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("");}
@@ -211,6 +223,10 @@ function buildInsp(el){
     h+=`<label>Style</label><select data-ctl="bstyle">${[["plein","Plein"],["light","Clair"],["ghost","Contour"]].map(o=>`<option value="${o[0]}" ${o[0]===st?'selected':''}>${o[1]}</option>`).join("")}</select>`;
     h+=`<label>Alignement</label><div class="seg" data-ctl="balign"><button data-v="left" class="${cur==='left'?'on':''}">⬅</button><button data-v="center" class="${cur==='center'?'on':''}">↔</button><button data-v="right" class="${cur==='right'?'on':''}">➡</button></div>`;
   }
+  if(type==="video"){
+    const ifr=el.querySelector("iframe");
+    h+=`<label>Lien vidéo (YouTube / Vimeo)</label><input type="text" data-ctl="vurl" placeholder="https://youtu.be/…" value="${ifr?esc(ifr.getAttribute('src')):''}">`;
+  }
   if(type==="image"){
     const img=el.querySelector("img");
     h+=`<label>Lien de l'image (URL)</label><input type="text" data-ctl="isrc" placeholder="https://…" value="${img?esc(img.getAttribute('src')):''}">`;
@@ -239,6 +255,7 @@ function wireInsp(el,type){
   if(q("bhref"))q("bhref").addEventListener("input",e=>{c.setAttribute("href",e.target.value||"#");});
   if(q("bstyle"))q("bstyle").addEventListener("change",e=>{c.classList.remove("btn--light","btn--ghost");if(e.target.value==="light")c.classList.add("btn--light");if(e.target.value==="ghost")c.classList.add("btn--ghost");});
   segWire("balign",v=>{el.querySelector(".inner").style.justifyContent=v==="center"?"center":v==="right"?"flex-end":"flex-start";});
+  if(q("vurl"))q("vurl").addEventListener("change",e=>{setVideo(el,e.target.value.trim());});
   if(q("isrc"))q("isrc").addEventListener("change",e=>{setImg(el,e.target.value.trim());});
   if(q("ialt"))q("ialt").addEventListener("input",e=>{const im=el.querySelector("img");if(im)im.alt=e.target.value;});
   if(q("ifit"))q("ifit").addEventListener("change",e=>{const im=el.querySelector("img");if(im)im.style.objectFit=e.target.value;});
@@ -296,7 +313,29 @@ function loadZoneToCanvas(){
   clearCanvas();const z=currentZone();
   if(z&&z.blocks)z.blocks.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);
   refreshEmpty();
+  HIST=[];HI=-1;pushHistory();
 }
+
+/* ===== Annuler / Rétablir + clavier ===== */
+let HIST=[],HI=-1,_rt=null;
+function snapBlocks(){return JSON.stringify(serializeBlocks().blocks);}
+function pushHistory(){const s=snapBlocks();if(HI>=0&&HIST[HI]===s)return;HIST=HIST.slice(0,HI+1);HIST.push(s);HI=HIST.length-1;if(HIST.length>120){HIST.shift();HI--;}updUndo();}
+function recordSoon(){clearTimeout(_rt);_rt=setTimeout(pushHistory,300);}
+function restore(json){canvas.querySelectorAll(".blk").forEach(b=>b.remove());select(null);JSON.parse(json).slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);refreshEmpty();}
+function undo(){if(HI>0){HI--;restore(HIST[HI]);updUndo();}}
+function redo(){if(HI<HIST.length-1){HI++;restore(HIST[HI]);updUndo();}}
+function updUndo(){const u=document.getElementById("undoBtn"),r=document.getElementById("redoBtn");if(u)u.disabled=HI<=0;if(r)r.disabled=HI>=HIST.length-1;}
+document.addEventListener("pointerup",recordSoon,true);
+document.addEventListener("input",recordSoon,true);
+document.addEventListener("change",recordSoon,true);
+document.addEventListener("keydown",e=>{
+  const t=(e.target.tagName||"").toLowerCase();const editing=e.target.isContentEditable||t==="input"||t==="select"||t==="textarea";
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="z"){e.preventDefault();if(e.shiftKey)redo();else undo();return;}
+  if((e.key==="Delete"||e.key==="Backspace")&&selEl&&!editing){e.preventDefault();selEl.remove();select(null);refreshEmpty();pushHistory();}
+  if(e.key==="Escape")select(null);
+});
+document.getElementById("undoBtn").addEventListener("click",undo);
+document.getElementById("redoBtn").addEventListener("click",redo);
 async function loadAll(){
   try{const r=await fetch("/blocks.json?v="+Date.now());ALLBLOCKS=r.ok?await r.json():{};}catch(e){ALLBLOCKS={};}
   if(!ALLBLOCKS||typeof ALLBLOCKS!=="object")ALLBLOCKS={};
