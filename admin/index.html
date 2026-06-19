@@ -190,12 +190,14 @@ const INLINE=new Set(["A","EM","STRONG","SPAN","BR","SMALL","I","B","U","MARK"])
 const TEXTTAGS=new Set(["H1","H2","H3","H4","H5","H6","P","LI","BUTTON","FIGCAPTION","BLOCKQUOTE","SMALL","SPAN","A","DIV"]);
 const DRAFT="kairos_draft_v2";
 
-let CONTENT={},THEME={},OVR={},current=0,dirty=false,sel=null,imgTarget=null,history=[],pendingImages=[];
+let CONTENT={},THEME={},OVR={},current=0,dirty=false,sel=null,imgTarget=null,history=[],pendingImages=[],lastChangeKey=null,BASE="";
 const $=id=>document.getElementById(id);
 function pageFile(){return PAGES[current].file;}
 function ovPage(){OVR[pageFile()]=OVR[pageFile()]||{};return OVR[pageFile()];}
 function snap(){return JSON.stringify({o:OVR,t:THEME});}
-function pushHist(){history.push(snap());if(history.length>80)history.shift();$("undoBtn").disabled=!history.length;}
+function pushHist(){history.push(snap());if(history.length>120)history.shift();$("undoBtn").disabled=!history.length;}
+function beginChange(key){if(key!==lastChangeKey){pushHist();lastChangeKey=key;}}
+function commitChange(){pushHist();lastChangeKey=null;}
 function markDirty(){dirty=true;const b=$("pubBtn");b.disabled=false;b.classList.add("dirty");b.textContent="Publier les modifications";$("saveState").textContent="Brouillon enregistré";try{localStorage.setItem(DRAFT,JSON.stringify({o:OVR,t:THEME,imgs:pendingImages}));}catch(e){}}
 function clean(){dirty=false;const b=$("pubBtn");b.disabled=true;b.classList.remove("dirty");b.textContent="Publier";$("saveState").textContent="Publié ✓";localStorage.removeItem(DRAFT);}
 function toast(m,t,l){const e=$("toast");e.className="toast show "+(t||"");e.innerHTML="<span>"+m+"</span>"+(l||"");clearTimeout(e._t);e._t=setTimeout(()=>e.className="toast "+(t||""),7000);}
@@ -205,6 +207,7 @@ async function boot(){
   try{CONTENT=await (await fetch("/content.json"+b)).json();}catch(e){CONTENT={};}
   try{THEME=await (await fetch("/theme.json"+b)).json();}catch(e){THEME={};}
   try{OVR=await (await fetch("/overrides.json"+b)).json();}catch(e){OVR={};}
+  BASE=snap();history=[];lastChangeKey=null;$("undoBtn").disabled=true;
   try{const d=JSON.parse(localStorage.getItem(DRAFT)||"null");if(d&&JSON.stringify({o:d.o,t:d.t})!==snap()){if(confirm("Des modifications non publiées (brouillon) existent. Les restaurer ?")){OVR=d.o;THEME=d.t;pendingImages=d.imgs||[];markDirty();}else localStorage.removeItem(DRAFT);}}catch(e){}
   renderPages();buildDesign();$("cFont").innerHTML='<option value="">Automatique</option>'+FONTS.map(f=>`<option>${f}</option>`).join("");
   loadPage(0);
@@ -274,13 +277,14 @@ function decorate(doc){
     if(ed){ e.stopPropagation(); selectEl(ed,doc); }
   },true);
   // édition du texte (délégation)
-  doc.addEventListener("input",function(e){ const ed=e.target.closest(".kx-edit"); if(!ed)return; const o=ovPage(),k=cssPath(ed); o[k]=o[k]||{}; o[k].h=cleanHTML(ed); markDirty(); });
+  doc.addEventListener("input",function(e){ const ed=e.target.closest(".kx-edit"); if(!ed)return; const o=ovPage(),k=cssPath(ed); beginChange("text:"+k); o[k]=o[k]||{}; o[k].h=cleanHTML(ed); markDirty(); });
   doc.addEventListener("paste",function(e){ const ed=e.target.closest("[contenteditable]"); if(!ed)return; e.preventDefault(); doc.execCommand("insertText",false,(e.clipboardData||window.clipboardData).getData("text")); });
 }
 
 function rgb2hex(c){const m=c&&c.match(/\d+/g);if(!m)return"#000000";return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("");}
 function selectEl(el,doc){
   const isNew=sel!==el;
+  if(isNew)lastChangeKey=null;
   if(sel&&sel!==el)sel.classList.remove("kx-sel");
   sel=el;el.classList.add("kx-sel");
   el.setAttribute("contenteditable","true");
@@ -296,9 +300,9 @@ function selectEl(el,doc){
   document.querySelectorAll("[data-al]").forEach(b=>b.classList.toggle("on",b.dataset.al===(el.style.textAlign||cs.textAlign)));
   const link=el.closest("a");$("grpLink").style.display=el.tagName==="A"?"block":"none";if(el.tagName==="A")$("cHref").value=el.getAttribute("href")||"";
 }
-function closeInsp(){$("insp").classList.remove("open");if(sel){sel.classList.remove("kx-sel");sel=null;}}
+function closeInsp(){$("insp").classList.remove("open");lastChangeKey=null;if(sel){sel.classList.remove("kx-sel");sel=null;}}
 function setSeg(id,on){$(id).classList.toggle("on",on);}
-function setStyle(prop,val){if(!sel)return;pushHist();sel.style[prop]=val;const o=ovPage(),k=cssPath(sel);o[k]=o[k]||{};o[k].s=o[k].s||{};o[k].s[prop]=val;markDirty();}
+function setStyle(prop,val){if(!sel)return;beginChange("style:"+cssPath(sel)+":"+prop);sel.style[prop]=val;const o=ovPage(),k=cssPath(sel);o[k]=o[k]||{};o[k].s=o[k].s||{};o[k].s[prop]=val;markDirty();}
 
 $("cSize").addEventListener("input",()=>setStyle("fontSize",$("cSize").value+"px"));
 $("cFont").addEventListener("change",()=>{const f=$("cFont").value;if(f){ensureFont($("frame").contentDocument,f);setStyle("fontFamily","'"+f+"', sans-serif");}else setStyle("fontFamily","");});
@@ -309,17 +313,17 @@ $("cBold").addEventListener("click",()=>{const on=!$("cBold").classList.contains
 $("cItalic").addEventListener("click",()=>{const on=!$("cItalic").classList.contains("on");setSeg("cItalic",on);setStyle("fontStyle",on?"italic":"normal");});
 $("cUnder").addEventListener("click",()=>{const on=!$("cUnder").classList.contains("on");setSeg("cUnder",on);setStyle("textDecoration",on?"underline":"none");});
 document.querySelectorAll("[data-al]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-al]").forEach(x=>x.classList.toggle("on",x===b));setStyle("textAlign",b.dataset.al);}));
-$("cHref").addEventListener("input",()=>{if(sel&&sel.tagName==="A"){pushHist();sel.setAttribute("href",$("cHref").value);const o=ovPage(),k=cssPath(sel);o[k]=o[k]||{};o[k].href=$("cHref").value;markDirty();}});
-$("cReset").addEventListener("click",()=>{if(!sel)return;pushHist();const o=ovPage(),k=cssPath(sel);if(o[k]&&o[k].s){Object.keys(o[k].s).forEach(p=>{sel.style[p]="";});delete o[k].s;}markDirty();selectEl(sel,$("frame").contentDocument);});
+$("cHref").addEventListener("input",()=>{if(sel&&sel.tagName==="A"){beginChange("href:"+cssPath(sel));sel.setAttribute("href",$("cHref").value);const o=ovPage(),k=cssPath(sel);o[k]=o[k]||{};o[k].href=$("cHref").value;markDirty();}});
+$("cReset").addEventListener("click",()=>{if(!sel)return;commitChange();const o=ovPage(),k=cssPath(sel);if(o[k]&&o[k].s){Object.keys(o[k].s).forEach(p=>{sel.style[p]="";});delete o[k].s;}markDirty();selectEl(sel,$("frame").contentDocument);});
 
 /* Design global */
 function buildDesign(){
   $("colorFields").innerHTML=COLORS.map(f=>`<label>${f.label}</label><div class="row"><input type="color" data-tk="${f.k}" value="${THEME[f.k]||'#000000'}"><input type="text" data-tk="${f.k}__hex" value="${THEME[f.k]||''}"></div>`).join("");
   $("fontFields").innerHTML=`<label>Police des titres</label><select data-tk="police_titres">${FONTS.map(o=>`<option ${o===THEME.police_titres?'selected':''}>${o}</option>`).join("")}</select><label>Police des textes</label><select data-tk="police_textes">${FONTS.map(o=>`<option ${o===THEME.police_textes?'selected':''}>${o}</option>`).join("")}</select><label>Forme des boutons</label><select data-tk="bouton_forme">${[["pilule","Pilule (très arrondi)"],["arrondi","Arrondi doux"],["carre","Carré net"]].map(o=>`<option value="${o[0]}" ${o[0]===THEME.bouton_forme?'selected':''}>${o[1]}</option>`).join("")}</select>`;
-  document.querySelectorAll("[data-tk]").forEach(inp=>inp.addEventListener("input",()=>{const k=inp.dataset.tk;pushHist();if(k.endsWith("__hex")){const base=k.replace("__hex","");if(/^#[0-9a-fA-F]{6}$/.test(inp.value)){THEME[base]=inp.value;const ci=document.querySelector(`[data-tk="${base}"]`);if(ci)ci.value=inp.value;}}else{THEME[k]=inp.value;const hx=document.querySelector(`[data-tk="${k}__hex"]`);if(hx)hx.value=inp.value;}try{applyTheme($("frame").contentDocument);}catch(e){}markDirty();}));
+  document.querySelectorAll("[data-tk]").forEach(inp=>inp.addEventListener("input",()=>{const k=inp.dataset.tk;beginChange("theme:"+k);if(k.endsWith("__hex")){const base=k.replace("__hex","");if(/^#[0-9a-fA-F]{6}$/.test(inp.value)){THEME[base]=inp.value;const ci=document.querySelector(`[data-tk="${base}"]`);if(ci)ci.value=inp.value;}}else{THEME[k]=inp.value;const hx=document.querySelector(`[data-tk="${k}__hex"]`);if(hx)hx.value=inp.value;}try{applyTheme($("frame").contentDocument);}catch(e){}markDirty();}));
 }
 
-function undo(){if(!history.length)return;const s=JSON.parse(history.pop());OVR=s.o;THEME=s.t;$("undoBtn").disabled=!history.length;buildDesign();closeInsp();markDirty();loadPage(current);}
+function undo(){if(!history.length)return;const s=JSON.parse(history.pop());OVR=s.o;THEME=s.t;lastChangeKey=null;$("undoBtn").disabled=!history.length;buildDesign();closeInsp();if(snap()===BASE)clean();else markDirty();loadPage(current);}
 $("undoBtn").addEventListener("click",undo);
 document.addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="z"){e.preventDefault();undo();}if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();publish();}});
 $("menuBtn").addEventListener("click",e=>{e.stopPropagation();$("menu").classList.toggle("open");});
@@ -328,7 +332,7 @@ $("resetBtn").addEventListener("click",()=>{if(confirm("Annuler toutes les modif
 
 function showPane(w){$("imgPick").style.display=w==="pick"?"":"none";$("imgCrop").style.display=w==="crop"?"":"none";}
 function openImg(el,kind,doc){imgTarget={el,kind,doc,key:cssPath(el)};try{const r=el.getBoundingClientRect();imgTarget.autoRatio=(r.width>2&&r.height>2)?r.width/r.height:1.5;}catch(e){imgTarget.autoRatio=1.5;}const cur=kind==="bg"?(el.style.backgroundImage||"").replace(/^url\(['"]?/,"").replace(/['"]?\)$/,""):el.getAttribute("src");$("imgUrl").value=(cur&&cur.indexOf("data:")!==0)?cur:"";showPane("pick");$("imgModal").classList.add("open");}
-function applyImg(storeVal,previewVal){previewVal=previewVal||storeVal;pushHist();const o=ovPage(),k=imgTarget.key;o[k]=o[k]||{};if(imgTarget.kind==="bg"){imgTarget.el.style.backgroundImage="url('"+previewVal+"')";o[k].bg=storeVal;}else{imgTarget.el.setAttribute("src",previewVal);o[k].src=storeVal;}markDirty();$("imgModal").classList.remove("open");}
+function applyImg(storeVal,previewVal){previewVal=previewVal||storeVal;commitChange();const o=ovPage(),k=imgTarget.key;o[k]=o[k]||{};if(imgTarget.kind==="bg"){imgTarget.el.style.backgroundImage="url('"+previewVal+"')";o[k].bg=storeVal;}else{imgTarget.el.setAttribute("src",previewVal);o[k].src=storeVal;}markDirty();$("imgModal").classList.remove("open");}
 function handleFile(f){if(!f.type||f.type.indexOf("image")!==0){alert("Veuillez choisir un fichier image (JPG, PNG, WEBP…).");return;}const r=new FileReader();r.onload=()=>startCrop(String(r.result));r.onerror=()=>alert("Impossible de lire ce fichier.");r.readAsDataURL(f);}
 $("drop").addEventListener("click",()=>$("imgFile").click());
 $("imgFile").addEventListener("change",()=>{if($("imgFile").files[0])handleFile($("imgFile").files[0]);$("imgFile").value="";});
@@ -355,7 +359,7 @@ $("cropApply").addEventListener("click",applyCrop);
 
 async function publish(){if(!dirty)return;const b=$("pubBtn");b.disabled=true;b.textContent="Publication…";$("saveState").textContent="Publication…";
   try{const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({overrides:OVR,theme:THEME,images:pendingImages.map(i=>({name:i.name,data:i.data}))})});const j=await r.json();
-    if(j.ok){pendingImages=[];history=[];$("undoBtn").disabled=true;clean();toast("✓ Publié"+(j.backup?" — sauvegarde "+j.backup+" créée":"")+" ! Mise à jour dans 1–2 min.","ok",' <a href="/" target="_blank">Voir le site</a>');}
+    if(j.ok){pendingImages=[];history=[];BASE=snap();lastChangeKey=null;$("undoBtn").disabled=true;clean();toast("✓ Publié"+(j.backup?" — sauvegarde "+j.backup+" créée":"")+" ! Mise à jour dans 1–2 min.","ok",' <a href="/" target="_blank">Voir le site</a>');}
     else{toast("Erreur : "+(j.error||"inconnue"),"err");markDirty();}
   }catch(e){toast("Erreur réseau : "+e.message,"err");markDirty();}}
 $("pubBtn").addEventListener("click",publish);
