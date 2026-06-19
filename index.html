@@ -16,8 +16,8 @@
 <header class="site-header">
   <div class="container nav">
     <a href="index.html" class="brand">
-      <span class="brand__name">Atelier Kairos</span>
-      <span class="brand__tag">Psychopraticienne · Sophrologue</span>
+      <span class="brand__name" data-edit="marque_nom">Atelier Kairos</span>
+      <span class="brand__tag" data-edit="marque_tagline">Psychopraticienne · Sophrologue</span>
     </a>
     <button class="nav__toggle" aria-label="Menu" aria-expanded="false">☰</button>
     <ul class="nav__links">
@@ -33,12 +33,12 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero__bg" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1900&q=80')"></div>
+  <div class="hero__bg" data-edit-bg="accueil_hero_image" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1900&q=80')"></div>
   <div class="hero__overlay"></div>
   <div class="hero__inner">
-    <h1>Un espace pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme.</h1>
-    <p class="hero__sub">Sophrologie · Relation d'aide · Libération des chocs émotionnels · Accompagnement du deuil · Constellations familiales</p>
-    <a href="contact.html" class="btn btn--light">Prendre rendez-vous</a>
+    <h1 data-edit="accueil_hero_titre">Un espace pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme.</h1>
+    <p class="hero__sub" data-edit="accueil_hero_sous_titre">Sophrologie · Relation d'aide · Libération des chocs émotionnels · Accompagnement du deuil · Constellations familiales</p>
+    <a href="contact.html" class="btn btn--light" data-edit="accueil_hero_bouton">Prendre rendez-vous</a>
   </div>
 </section>
 
@@ -46,13 +46,13 @@
 <section class="section">
   <div class="container split">
     <div class="split__media reveal">
-      <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80" alt="Portrait dans une lumière douce et naturelle">
+      <img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80" alt="Portrait dans une lumière douce et naturelle" data-edit-src="accueil_presentation_image">
     </div>
     <div class="split__body reveal">
       <span class="eyebrow">Faire connaissance</span>
-      <h2>Rencontrer une personne avant de rencontrer une méthode</h2>
-      <p>Je vous accueille dans un espace bienveillant et sécurisant, pensé pour que vous vous sentiez compris dès les premiers instants. Mon approche est avant tout humaine : prendre le temps de l'écoute, respecter votre rythme, et vous accompagner avec douceur dans ce que vous traversez.</p>
-      <p>Que vous soyez en pleine épreuve ou en quête d'un mieux-être plus durable, mon rôle est de vous offrir un lieu où déposer ce qui est lourd, comprendre ce qui se rejoue, et avancer vers davantage de sérénité et de liberté.</p>
+      <h2 data-edit="accueil_presentation_titre">Rencontrer une personne avant de rencontrer une méthode</h2>
+      <p data-edit="accueil_presentation_p1">Je vous accueille dans un espace bienveillant et sécurisant, pensé pour que vous vous sentiez compris dès les premiers instants. Mon approche est avant tout humaine : prendre le temps de l'écoute, respecter votre rythme, et vous accompagner avec douceur dans ce que vous traversez.</p>
+      <p data-edit="accueil_presentation_p2">Que vous soyez en pleine épreuve ou en quête d'un mieux-être plus durable, mon rôle est de vous offrir un lieu où déposer ce qui est lourd, comprendre ce qui se rejoue, et avancer vers davantage de sérénité et de liberté.</p>
       <p><em>« Vous n'avez pas à traverser seul ce que la vie vous demande parfois de porter. Ensemble, nous pouvons créer un espace pour comprendre, apaiser et avancer à votre rythme. »</em></p>
       <a href="contact.html" class="btn btn--ghost">Échanger avec moi</a>
     </div>
@@ -170,7 +170,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <span class="brand__name">Atelier Kairos</span>
+        <span class="brand__name" data-edit="marque_nom">Atelier Kairos</span>
         <p>Un accompagnement humain, doux et sécurisant pour comprendre, apaiser et avancer à votre rythme.</p>
       </div>
       <div>
@@ -201,5 +201,6 @@
 
 <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 <script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -15,8 +15,8 @@
 <header class="site-header">
   <div class="container nav">
     <a href="index.html" class="brand">
-      <span class="brand__name">Atelier Kairos</span>
-      <span class="brand__tag">Psychopraticienne · Sophrologue</span>
+      <span class="brand__name" data-edit="marque_nom">Atelier Kairos</span>
+      <span class="brand__tag" data-edit="marque_tagline">Psychopraticienne · Sophrologue</span>
     </a>
     <button class="nav__toggle" aria-label="Menu" aria-expanded="false">☰</button>
     <ul class="nav__links">
@@ -50,12 +50,12 @@
     <div class="pricing">
       <div class="price-card reveal">
         <h3>Séance individuelle</h3>
-        <div class="price">XX €<small> / séance</small></div>
+        <div class="price"><span data-edit="tarif_individuel">XX €</span><small> / séance</small></div>
         <p>Séance de 1h à 1h15, en présentiel ou en visioconférence. <em>(Tarif à compléter)</em></p>
       </div>
       <div class="price-card reveal">
         <h3>Atelier de groupe</h3>
-        <div class="price">XX €<small> / personne</small></div>
+        <div class="price"><span data-edit="tarif_atelier">XX €</span><small> / personne</small></div>
         <p>Ateliers thématiques en petit groupe. Dates et tarifs communiqués sur demande. <em>(À compléter)</em></p>
       </div>
     </div>
@@ -71,11 +71,11 @@
       <h2>Écrivez-moi quelques mots</h2>
       <p>Vous pouvez me joindre par le formulaire ci-contre, par téléphone ou par email. Je vous réponds avec attention dans les meilleurs délais.</p>
       <ul class="contact-info">
-        <li><span class="ico">✉️</span><span>Email<br><a href="mailto:contact@atelier-kairos.com">contact@atelier-kairos.com</a></span></li>
-        <li><span class="ico">📞</span><span>Téléphone<br><a href="tel:+33000000000">XX XX XX XX XX</a> <em>(à compléter)</em></span></li>
-        <li><span class="ico">📍</span><span>Cabinet<br>Adresse à compléter</span></li>
+        <li><span class="ico">✉️</span><span>Email<br><a href="mailto:contact@atelier-kairos.com"><span data-edit="contact_email">contact@atelier-kairos.com</span></a></span></li>
+        <li><span class="ico">📞</span><span>Téléphone<br><a href="tel:+33000000000"><span data-edit="contact_telephone">XX XX XX XX XX</span></a></span></li>
+        <li><span class="ico">📍</span><span>Cabinet<br><span data-edit="contact_adresse">Adresse à compléter</span></span></li>
         <li><span class="ico">💻</span><span>Format<br>Présentiel &amp; visioconférence</span></li>
-        <li><span class="ico">📷</span><span>Instagram<br><a href="#">@atelier.kairos <em>(lien à compléter)</em></a></span></li>
+        <li><span class="ico">📷</span><span>Instagram<br><a href="#" data-edit-href="contact_instagram_url"><span data-edit="contact_instagram_texte">@atelier.kairos</span></a></span></li>
       </ul>
     </div>
 
@@ -129,7 +129,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <span class="brand__name">Atelier Kairos</span>
+        <span class="brand__name" data-edit="marque_nom">Atelier Kairos</span>
         <p>Un accompagnement humain, doux et sécurisant pour comprendre, apaiser et avancer à votre rythme.</p>
       </div>
       <div>
@@ -160,5 +160,6 @@
 
 <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 <script src="script.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

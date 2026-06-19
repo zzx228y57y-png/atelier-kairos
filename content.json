@@ -1,0 +1,22 @@
+{
+  "marque_nom": "Atelier Kairos",
+  "marque_tagline": "Psychopraticienne · Sophrologue",
+
+  "accueil_hero_titre": "Un espace pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme.",
+  "accueil_hero_sous_titre": "Sophrologie · Relation d'aide · Libération des chocs émotionnels · Accompagnement du deuil · Constellations familiales",
+  "accueil_hero_bouton": "Prendre rendez-vous",
+  "accueil_hero_image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1900&q=80",
+
+  "accueil_presentation_titre": "Rencontrer une personne avant de rencontrer une méthode",
+  "accueil_presentation_p1": "Je vous accueille dans un espace bienveillant et sécurisant, pensé pour que vous vous sentiez compris dès les premiers instants. Mon approche est avant tout humaine : prendre le temps de l'écoute, respecter votre rythme, et vous accompagner avec douceur dans ce que vous traversez.",
+  "accueil_presentation_p2": "Que vous soyez en pleine épreuve ou en quête d'un mieux-être plus durable, mon rôle est de vous offrir un lieu où déposer ce qui est lourd, comprendre ce qui se rejoue, et avancer vers davantage de sérénité et de liberté.",
+  "accueil_presentation_image": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80",
+
+  "contact_email": "contact@atelier-kairos.com",
+  "contact_telephone": "XX XX XX XX XX",
+  "contact_adresse": "Adresse à compléter",
+  "contact_instagram_url": "#",
+  "contact_instagram_texte": "@atelier.kairos",
+  "tarif_individuel": "XX €",
+  "tarif_atelier": "XX €"
+}
