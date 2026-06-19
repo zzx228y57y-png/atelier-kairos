@@ -116,6 +116,12 @@ export async function onRequestPost(context) {
       results.push("theme.json");
     }
 
+    if (payload.overrides && typeof payload.overrides === "object") {
+      const o = toBase64Utf8(JSON.stringify(payload.overrides, null, 2) + "\n");
+      await ghPut(owner, repo, branch, "overrides.json", o, "Mise à jour de la mise en forme via l'éditeur", token, email);
+      results.push("overrides.json");
+    }
+
     if (Array.isArray(payload.images)) {
       for (const img of payload.images) {
         if (!img || !img.name || !img.data) continue;
