@@ -1,11 +1,1 @@
-{
-  "atelier.html": {
-    "free": true,
-    "h": 560,
-    "blocks": [
-      { "t": "titre", "x": 8, "y": 64, "w": 84, "h": 88, "z": 101, "bg": "", "is": "", "html": "<h2 style=\"text-align:center\">Bienvenue dans mon atelier</h2>" },
-      { "t": "texte", "x": 22, "y": 176, "w": 56, "h": 120, "z": 102, "bg": "", "is": "", "html": "<p style=\"text-align:center\">Cet espace se compose librement depuis l'éditeur : glissez des blocs, déplacez-les, redimensionnez-les, puis publiez.</p>" },
-      { "t": "bouton", "x": 35, "y": 320, "w": 30, "h": 64, "z": 103, "bg": "", "is": "justify-content:center;", "html": "<a class=\"btn\" href=\"contact.html\">Prendre rendez-vous</a>" }
-    ]
-  }
-}
+{}

@@ -111,7 +111,9 @@
   function pageName() {
     var p = location.pathname.replace(/\/+$/, "");
     var b = p.substring(p.lastIndexOf("/") + 1);
-    return b || "index.html";
+    if (!b) return "index.html";
+    if (b.indexOf(".") === -1) b += ".html"; // Cloudflare sert des URL « propres » (/atelier => atelier.html)
+    return b;
   }
   function appliquerOverrides(ov) {
     if (!ov) return;
