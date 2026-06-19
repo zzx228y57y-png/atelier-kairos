@@ -112,7 +112,10 @@ p{margin-bottom:1.1rem;}
   display:flex;align-items:center;justify-content:space-between;
   height:74px;
 }
-.brand{display:flex;flex-direction:column;line-height:1;}
+.brand{display:flex;flex-direction:row;align-items:center;gap:12px;line-height:1;text-decoration:none;}
+.brand__logo{height:46px;width:46px;flex:none;display:block;border-radius:10px;}
+.brand__text{display:flex;flex-direction:column;line-height:1;}
+@media (max-width:880px){ .brand__logo{height:40px;width:40px;} }
 .brand__name{font-family:var(--titre);font-size:1.5rem;font-weight:600;color:var(--cacao);letter-spacing:.02em;}
 .brand__tag{font-size:.62rem;text-transform:uppercase;letter-spacing:.28em;color:var(--terracotta);margin-top:5px;}
 
