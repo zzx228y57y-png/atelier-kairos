@@ -27,16 +27,16 @@
   .palette .note{margin-top:16px;font-size:.76rem;color:var(--muted);line-height:1.5}
   .stage{flex:1;overflow:auto;padding:30px}
   .canvas{position:relative;max-width:1100px;margin:0 auto;background:#fff;min-height:760px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.07);background-image:linear-gradient(rgba(201,122,97,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(201,122,97,.07) 1px,transparent 1px);background-size:100% 44px,8.3333% 100%}
-  .blk{position:absolute;border-radius:10px;overflow:hidden;outline:1px solid transparent}
+  .blk{position:absolute;border-radius:10px;outline:1px solid transparent}
   .blk:hover{outline:2px solid var(--accent)}
   .blk.sel{outline:2px solid var(--accent)}
-  .blk .inner{width:100%;height:100%;padding:8px 12px;overflow:hidden}
+  .blk .inner{width:100%;height:100%;padding:8px 12px;overflow:hidden;border-radius:inherit}
   .blk .inner h2{margin:0;font-family:'Cormorant Garamond',serif}
   .blk .inner p{margin:0}
   .blk.image .inner{padding:0;display:flex;align-items:center;justify-content:center;background:#ece4dc;color:#b9a796;font-size:1.6rem}
   .blk.image img{width:100%;height:100%;object-fit:cover;display:block}
   .blk.button .inner{display:flex;align-items:center;justify-content:center;background:none}
-  .blk .bar{position:absolute;top:-13px;right:0;display:none;gap:4px;background:#6B4F43;border-radius:7px;padding:3px;z-index:6}
+  .blk .bar{position:absolute;top:-15px;right:6px;display:none;gap:4px;background:#6B4F43;border-radius:7px;padding:3px;z-index:8;box-shadow:0 3px 10px rgba(0,0,0,.18)}
   .blk:hover .bar,.blk.sel .bar{display:flex}
   .blk .bar button{background:rgba(255,255,255,.18);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;padding:0}
   .blk .bar button:hover{background:rgba(255,255,255,.4)}
