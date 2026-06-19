@@ -79,6 +79,33 @@ async function ghPut(owner, repo, branch, path, base64Content, message, token, e
   return true;
 }
 
+// Crée une sauvegarde versionnée (Release GitHub) avec zip du code source complet
+async function ghCreateRelease(owner, repo, branch, token, email) {
+  let n = 1;
+  try {
+    const lr = await fetch(`${GH_API}/repos/${owner}/${repo}/releases?per_page=100`, {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "User-Agent": "atelier-kairos-cms" },
+    });
+    if (lr.ok) { const arr = await lr.json(); n = arr.length + 1; }
+  } catch (e) {}
+  const d = new Date();
+  const pad = (x) => String(x).padStart(2, "0");
+  const stamp = d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + "-" + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds());
+  const tag = "v" + n + "-" + stamp;
+  const r = await fetch(`${GH_API}/repos/${owner}/${repo}/releases`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", "User-Agent": "atelier-kairos-cms", "content-type": "application/json" },
+    body: JSON.stringify({
+      tag_name: tag,
+      target_commitish: branch,
+      name: "Version " + n + " — " + d.toISOString().replace("T", " ").slice(0, 16) + " UTC",
+      body: "Sauvegarde automatique du code source complet" + (email ? " (publié par " + email + ")" : "") + ".\n\nTéléchargez « Source code (zip) » ci-dessous pour récupérer le site entier de cette version.",
+    }),
+  });
+  if (r.status !== 200 && r.status !== 201) throw new Error("release " + r.status);
+  return tag;
+}
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -135,7 +162,11 @@ export async function onRequestPost(context) {
       return json({ ok: false, error: "Rien à publier." }, 400);
     }
 
-    return json({ ok: true, published: results, by: email || null });
+    // Sauvegarde versionnée — ne doit jamais empêcher la publication
+    let backup = null;
+    try { backup = await ghCreateRelease(owner, repo, branch, token, email); } catch (e) {}
+
+    return json({ ok: true, published: results, backup: backup, by: email || null });
   } catch (e) {
     return json({ ok: false, error: String(e.message || e) }, 500);
   }
