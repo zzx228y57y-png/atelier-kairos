@@ -106,13 +106,40 @@
     return fetch(url + bust).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
   }
 
-  // Applique le thème le plus tôt possible, puis le contenu
+  // ---------- OVERRIDES par élément (système type Squarespace) ----------
+  // overrides.json : { "index.html": { "<sélecteur CSS>": {h:"texte", s:{...styles}, src, bg} } }
+  function pageName() {
+    var p = location.pathname.replace(/\/+$/, "");
+    var b = p.substring(p.lastIndexOf("/") + 1);
+    return b || "index.html";
+  }
+  function appliquerOverrides(ov) {
+    if (!ov) return;
+    var page = ov[pageName()];
+    if (!page) return;
+    Object.keys(page).forEach(function (sel) {
+      var el;
+      try { el = document.querySelector(sel); } catch (e) { return; }
+      if (!el) return;
+      var o = page[sel];
+      if (typeof o.h === "string") el.innerHTML = o.h;
+      if (o.src) el.setAttribute("src", o.src);
+      if (o.bg) el.style.backgroundImage = "url('" + o.bg + "')";
+      if (o.s) Object.keys(o.s).forEach(function (k) { try { el.style[k] = o.s[k]; } catch (e) {} });
+    });
+  }
+
+  function appliquerTout() {
+    charger("content.json").then(appliquerContenu).then(function () {
+      charger("overrides.json").then(appliquerOverrides);
+    });
+  }
+
+  // Applique le thème le plus tôt possible, puis le contenu + overrides
   charger("theme.json").then(appliquerTheme);
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      charger("content.json").then(appliquerContenu);
-    });
+    document.addEventListener("DOMContentLoaded", appliquerTout);
   } else {
-    charger("content.json").then(appliquerContenu);
+    appliquerTout();
   }
 })();
