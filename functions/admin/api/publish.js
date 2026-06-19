@@ -149,6 +149,12 @@ export async function onRequestPost(context) {
       results.push("overrides.json");
     }
 
+    if (payload.blocks && typeof payload.blocks === "object") {
+      const bl = toBase64Utf8(JSON.stringify(payload.blocks, null, 2) + "\n");
+      await ghPut(owner, repo, branch, "blocks.json", bl, "Mise à jour des blocs via l'éditeur", token, email);
+      results.push("blocks.json");
+    }
+
     if (Array.isArray(payload.images)) {
       for (const img of payload.images) {
         if (!img || !img.name || !img.data) continue;
