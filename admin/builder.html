@@ -110,6 +110,7 @@
 
 <script>
 const COLS=12, ROW=44;
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 const canvas=document.getElementById("canvas");
 function cellW(){return canvas.clientWidth/COLS;}
 function snap(v,step){return Math.round(v/step)*step;}
