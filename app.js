@@ -267,9 +267,13 @@
 
   function appliquerTout() {
     charger("content.json").then(appliquerContenu).then(function () {
-      charger("overrides.json").then(appliquerOverrides);
       charger("blocks.json").then(function (bl) { if (bl) try { renderBlocks(bl); } catch (e) {} });
-      charger("pages.json").then(function (pg) { if (pg) try { renderPages(pg); } catch (e) {} });
+      // On applique le ré-agencement des sections (pages.json) AVANT les overrides :
+      // les sélecteurs des overrides sont calculés par l'éditeur sur la page ré-agencée,
+      // donc le rendu public doit ré-agencer d'abord, puis appliquer les retouches.
+      return charger("pages.json").then(function (pg) { if (pg) try { renderPages(pg); } catch (e) {} });
+    }).then(function () {
+      charger("overrides.json").then(appliquerOverrides);
     });
   }
 
