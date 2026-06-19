@@ -18,6 +18,9 @@
   .top .sp{flex:1}
   .top button{background:none;border:1px solid var(--line);border-radius:9px;height:36px;padding:0 14px;cursor:pointer;font:inherit;font-size:.85rem;color:var(--ink)}
   .top button:hover{background:var(--soft)}
+  .top button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .top button.primary:hover{background:#b86b53}
+  .top button.primary:disabled{opacity:.6;cursor:default}
   .main{flex:1;display:flex;min-height:0}
   .palette{width:220px;flex:none;background:#fff;border-right:1px solid var(--line);padding:16px;overflow:auto}
   .palette h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
@@ -70,7 +73,9 @@
     <span class="logo">Atelier Kairos</span><span class="beta">beta</span>
     <span class="hint">Bac à sable — testez librement, <b>rien n'est publié</b>.</span>
     <span class="sp"></span>
+    <span id="pubState" class="hint"></span>
     <button id="clearBtn">Tout effacer</button>
+    <button id="pubBtn" class="primary">Publier</button>
   </div>
   <div class="main">
     <aside class="palette">
@@ -254,6 +259,46 @@ document.querySelectorAll(".chip").forEach(chip=>{
 
 document.getElementById("clearBtn").addEventListener("click",()=>{if(confirm("Tout effacer ?")){canvas.querySelectorAll(".blk").forEach(b=>b.remove());refreshEmpty();}});
 window.addEventListener("resize",refreshEmpty);
+
+/* ===== Chargement / sérialisation / publication ===== */
+const TARGET="atelier.html";
+let ALLBLOCKS={};
+function loadBlock(b){
+  const el=makeBlock(b.t,0,0);const W=canvas.clientWidth;
+  el.style.left=(b.x/100*W)+"px";el.style.top=(b.y||0)+"px";
+  el.style.width=(b.w/100*W)+"px";el.style.height=(b.h||80)+"px";
+  if(b.z)el.style.zIndex=b.z;if(b.bg)el.style.backgroundColor=b.bg;
+  const inner=el.querySelector(".inner");if(b.is)inner.style.cssText=b.is;if(typeof b.html==="string")inner.innerHTML=b.html;
+  return el;
+}
+function serialize(){
+  const W=canvas.clientWidth||1100;let maxB=360;
+  const blocks=[...canvas.querySelectorAll(".blk")].map(el=>{
+    const inner=el.querySelector(".inner");const tmp=inner.cloneNode(true);tmp.querySelectorAll("[contenteditable]").forEach(n=>n.removeAttribute("contenteditable"));
+    const y=Math.round(parseFloat(el.style.top)||0),h=Math.round(parseFloat(el.style.height)||80);maxB=Math.max(maxB,y+h);
+    return {t:blockType(el),x:+(parseFloat(el.style.left)/W*100).toFixed(2),y:y,w:+(parseFloat(el.style.width)/W*100).toFixed(2),h:h,z:parseInt(el.style.zIndex)||1,bg:el.style.backgroundColor||"",is:inner.getAttribute("style")||"",html:tmp.innerHTML};
+  });
+  return {free:true,h:maxB+60,blocks:blocks};
+}
+async function loadTarget(){
+  try{const r=await fetch("/blocks.json?v="+Date.now());ALLBLOCKS=r.ok?await r.json():{};}catch(e){ALLBLOCKS={};}
+  const p=ALLBLOCKS[TARGET];
+  if(p&&p.blocks){canvas.querySelectorAll(".blk").forEach(b=>b.remove());p.blocks.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);refreshEmpty();}
+}
+async function publish(){
+  const btn=document.getElementById("pubBtn"),st=document.getElementById("pubState");
+  btn.disabled=true;btn.textContent="Publication…";st.textContent="";
+  try{
+    ALLBLOCKS[TARGET]=serialize();
+    const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({blocks:ALLBLOCKS})});
+    const j=await r.json();
+    if(j.ok){st.textContent="✓ Publié — visible en ligne dans 1–2 min";st.style.color="#2e7d52";}
+    else{st.textContent="Erreur : "+(j.error||"inconnue");st.style.color="#c0392b";}
+  }catch(e){st.textContent="Erreur réseau";st.style.color="#c0392b";}
+  btn.disabled=false;btn.textContent="Publier";
+}
+document.getElementById("pubBtn").addEventListener("click",publish);
+loadTarget();
 </script>
 </body>
 </html>
