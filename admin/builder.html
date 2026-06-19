@@ -3,81 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
 <title>Composer les pages — Atelier Kairos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 <style>
-  :root{--ui:'Lato',-apple-system,sans-serif;--accent:#C97A61;--ink:#3a2e27;--muted:#9a8a7e;--line:#e7ddd4;--soft:#f7f2ec}
+  :root{--ui:'Lato',-apple-system,sans-serif;--accent:#C97A61;--accent2:#b06650;--ink:#3a2e27;--muted:#9a8a7e;--line:#e7ddd4;--soft:#f7f2ec;--panel:#fff}
   *{box-sizing:border-box}
-  body{margin:0;font-family:var(--ui);color:var(--ink);background:#efe9e3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-  .top{height:54px;flex:none;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 18px}
+  body{margin:0;font-family:var(--ui);color:var(--ink);background:#ece5de;height:100vh;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit}
+  /* ---- Barre du haut ---- */
+  .top{height:56px;flex:none;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 16px;z-index:50}
   .top .logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600}
-  .beta{font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:#d23b2f;padding:2px 6px;border-radius:6px}
-  .top .hint{color:var(--muted);font-size:.82rem}
-  .top .sp{flex:1}
-  .top button{background:none;border:1px solid var(--line);border-radius:9px;height:36px;padding:0 14px;cursor:pointer;font:inherit;font-size:.85rem;color:var(--ink)}
-  .top button:hover{background:var(--soft)}
-  .top button:disabled{opacity:.4;cursor:default}
-  .top button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .top button.primary:hover{background:#b86b53}
-  .top button.primary:disabled{opacity:.6;cursor:default}
+  .beta{font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:#d23b2f;padding:2px 6px;border-radius:6px}
+  .back{text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:9px;height:38px;display:inline-flex;align-items:center;padding:0 12px;font-size:.85rem;gap:6px}
+  .back:hover{background:var(--soft)}
+  .sel{height:38px;border:1px solid var(--line);border-radius:9px;padding:0 10px;font:inherit;font-size:.85rem;background:#fff;color:var(--ink);cursor:pointer}
+  .hint{color:var(--muted);font-size:.82rem}
+  .sp{flex:1}
+  .devices{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:3px}
+  .devices button{background:none;border:none;width:34px;height:30px;border-radius:6px;cursor:pointer;color:var(--muted);font-size:.95rem}
+  .devices button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .ic{background:#fff;border:1px solid var(--line);border-radius:9px;height:38px;min-width:38px;padding:0 11px;cursor:pointer;color:var(--ink);font-size:.92rem;display:inline-flex;align-items:center;gap:6px}
+  .ic:hover{background:var(--soft)} .ic:disabled{opacity:.4;cursor:default}
+  .primary{background:var(--accent);color:#fff;border:none;border-radius:9px;height:38px;padding:0 20px;font-weight:600;cursor:pointer;font-size:.9rem}
+  .primary:hover{background:var(--accent2)} .primary:disabled{opacity:.55;cursor:default}
+  .primary.dirty{box-shadow:0 0 0 3px rgba(201,122,97,.25)}
+  .pubstate{font-size:.76rem;color:var(--muted);min-width:84px;text-align:right}
+
   .main{flex:1;display:flex;min-height:0}
-  .palette{width:220px;flex:none;background:#fff;border-right:1px solid var(--line);padding:16px;overflow:auto}
-  .palette h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
-  .chip{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px;cursor:grab;background:var(--soft);user-select:none;font-size:.9rem;font-weight:600}
-  .chip:hover{border-color:var(--accent);color:var(--accent)}
-  .chip .ic{font-size:1.15rem}
-  .palette .note{margin-top:16px;font-size:.76rem;color:var(--muted);line-height:1.5}
-  .stage{flex:1;overflow:auto;padding:30px}
-  .canvas{position:relative;max-width:1100px;margin:0 auto;background:#fff;min-height:760px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.07);background-image:linear-gradient(rgba(201,122,97,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(201,122,97,.07) 1px,transparent 1px);background-size:100% 44px,8.3333% 100%}
-  .blk{position:absolute;border-radius:10px;outline:1px solid transparent}
-  .blk:hover{outline:2px solid var(--accent)}
-  .blk.sel{outline:2px solid var(--accent)}
-  .blk .inner{width:100%;height:100%;padding:8px 12px;overflow:hidden;border-radius:inherit}
-  .blk .inner h2{margin:0;font-family:'Cormorant Garamond',serif}
-  .blk .inner p{margin:0}
-  .blk.image .inner{padding:0;display:flex;align-items:center;justify-content:center;background:#ece4dc;color:#b9a796;font-size:1.6rem}
-  .blk.image img{width:100%;height:100%;object-fit:cover;display:block}
-  .blk.bouton .inner{display:flex;align-items:center;justify-content:flex-start;background:none;padding:8px 12px}
-  .blk .bar{position:absolute;top:-15px;right:6px;display:none;gap:4px;background:#6B4F43;border-radius:7px;padding:3px;z-index:8;box-shadow:0 3px 10px rgba(0,0,0,.18)}
-  .blk:hover .bar,.blk.sel .bar{display:flex}
-  .blk .bar button{background:rgba(255,255,255,.18);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;padding:0}
-  .blk .bar button:hover{background:rgba(255,255,255,.4)}
-  .blk .move{position:absolute;inset:0;cursor:grab}
-  .blk.dragging .move,.blk.sizing{cursor:grabbing}
-  .blk .rs{position:absolute;right:-4px;bottom:-4px;width:16px;height:16px;background:var(--accent);border:2px solid #fff;border-radius:4px;cursor:nwse-resize;z-index:7}
-  .blk [contenteditable]{outline:none;cursor:text;position:relative;z-index:5}
-  .ghost{position:fixed;pointer-events:none;z-index:99;background:var(--accent);color:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:.85rem;opacity:.9;transform:translate(-50%,-50%)}
-  .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c3b3a6;font-size:1rem;pointer-events:none;text-align:center;padding:30px}
-  .blk.separateur .inner{display:flex;align-items:center;padding:0 6px}
-  .blk.separateur .sepline{width:100%;height:2px;background:#d9c8ba;border-radius:2px}
-  .blk.espace .inner{border:1px dashed #e7ddd4;border-radius:8px}
-  .blk.video .inner{display:flex;align-items:center;justify-content:center;background:#1d1714;color:#fff;text-align:center;border-radius:inherit;font-size:1.4rem}
-  .blk.video .inner small{font-size:.72rem;opacity:.8}
-  .blk.video iframe{width:100%;height:100%;border:0;display:block;border-radius:inherit}
-  .insp{width:256px;flex:none;background:#fff;border-left:1px solid var(--line);padding:16px;overflow:auto;display:none}
-  .insp.open{display:block}
-  .insp h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
-  .insp label{display:block;font-size:.74rem;font-weight:700;margin:13px 0 5px;color:var(--ink)}
-  .insp input[type=text],.insp select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.85rem;background:#fff}
-  .insp .seg{display:flex;gap:4px}
-  .insp .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:7px;height:32px;cursor:pointer;font-size:.85rem;color:var(--ink)}
-  .insp .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .insp .row2{display:flex;gap:8px;align-items:center}
-  .insp input[type=color]{width:42px;height:32px;border:1px solid var(--line);border-radius:7px;padding:0;background:none;cursor:pointer;flex:none}
-  .insp .mini{background:none;border:1px solid var(--line);border-radius:7px;height:32px;padding:0 10px;cursor:pointer;font-size:.78rem;color:var(--ink)}
-  .insp .mini:hover{background:var(--soft)}
-  .insp .del{width:100%;margin-top:16px;background:#fbe9e6;color:#c0392b;border:none;border-radius:8px;height:38px;cursor:pointer;font-weight:600;font-size:.85rem}
-  .insp .del:hover{background:#f7ddd8}
+  /* ---- Panneau gauche : ajouter ---- */
+  .left{width:236px;flex:none;background:var(--panel);border-right:1px solid var(--line);overflow:auto;padding:14px}
+  .left h2{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:6px 0 10px}
+  .bigadd{width:100%;border:1.5px dashed var(--accent);background:rgba(201,122,97,.06);color:var(--accent2);border-radius:11px;padding:14px;font-weight:700;font-size:.92rem;cursor:pointer;margin-bottom:14px}
+  .bigadd:hover{background:rgba(201,122,97,.12)}
+  .left .note{font-size:.76rem;color:var(--muted);line-height:1.55;margin-top:6px}
+  .tmpls{display:flex;flex-direction:column;gap:9px}
+  .tmpl{border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--soft);font-size:.86rem;font-weight:600;display:flex;gap:9px;align-items:center}
+  .tmpl:hover{border-color:var(--accent);color:var(--accent2)}
+  .tmpl .em{font-size:1.1rem}
+
+  /* ---- Scène / page ---- */
+  .stage{flex:1;overflow:auto;padding:26px 18px;display:flex;justify-content:center;align-items:flex-start}
+  .page{width:100%;max-width:1100px;background:var(--coquillage,#F8F5F1);min-height:78vh;box-shadow:0 12px 50px rgba(0,0,0,.12);transition:max-width .25s;border-radius:6px;overflow:hidden}
+  .page.tablet{max-width:800px}
+  .page.phone{max-width:390px}
+  .empty{padding:80px 28px;text-align:center;color:#b3a395}
+  .empty .e1{font-family:'Cormorant Garamond',serif;font-size:1.7rem;color:#8a7a6c;margin-bottom:8px}
+
+  /* habillage éditeur autour des sections (kx2-*) */
+  .kxe-sec{position:relative}
+  .kxe-sec.kxe-selsec{outline:2px solid var(--accent);outline-offset:-2px}
+  .kxe-sec:hover{outline:1px dashed rgba(201,122,97,.5);outline-offset:-1px}
+  .kxe-sectools{position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:6;background:#6B4F43;border-radius:9px;padding:4px;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+  .kxe-sec:hover>.kxe-sectools,.kxe-sec.kxe-selsec>.kxe-sectools{display:flex}
+  .kxe-sectools button{background:rgba(255,255,255,.16);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+  .kxe-sectools button:hover{background:rgba(255,255,255,.4)}
+  .kxe-col{position:relative;min-height:30px}
+  .kxe-blk{position:relative}
+  .kxe-blk.kxe-selblk>.kx2-blk{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}
+  .kxe-blk:hover>.kx2-blk{outline:1px dashed rgba(201,122,97,.6);outline-offset:4px;border-radius:3px}
+  .kxe-blktools{position:absolute;top:-14px;right:-4px;display:none;gap:3px;z-index:7;background:#6B4F43;border-radius:7px;padding:3px}
+  .kxe-blk:hover>.kxe-blktools,.kxe-blk.kxe-selblk>.kxe-blktools{display:flex}
+  .kxe-blktools button{background:rgba(255,255,255,.16);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:.76rem;display:flex;align-items:center;justify-content:center}
+  .kxe-blktools button:hover{background:rgba(255,255,255,.4)}
+  .kxe-addblk{display:block;width:100%;border:1px dashed #d9c8ba;background:rgba(255,255,255,.5);color:#9a7d6c;border-radius:8px;padding:7px;font:600 .8rem var(--ui);cursor:pointer;margin-top:10px}
+  .kxe-addblk:hover{border-color:var(--accent);color:var(--accent2);background:#fff}
+  [contenteditable]{outline:none}
+  .kxe-stack .kx2-grid{grid-template-columns:1fr!important}
+  .kxe-stack .kx2-col{grid-column:span 1!important}
+
+  /* ---- Panneau droit : réglages ---- */
+  .right{width:286px;flex:none;background:var(--panel);border-left:1px solid var(--line);overflow:auto;display:none}
+  .right.open{display:block}
+  .right .rh{padding:15px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .right .rh .t{font-weight:700;font-size:.95rem}
+  .right .rh .x{background:none;border:none;font-size:1.1rem;color:var(--muted);cursor:pointer}
+  .grp{padding:13px 16px;border-bottom:1px solid var(--line)}
+  .grp>label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 7px}
+  .grp .ln{margin-top:11px}
+  .row{display:flex;gap:7px;align-items:center}
+  .right select,.right input[type=text],.right input[type=number],.right textarea{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.85rem;background:#fff;color:var(--ink)}
+  .right textarea{min-height:64px;resize:vertical}
+  .right input[type=color]{width:40px;height:34px;border:1px solid var(--line);border-radius:7px;padding:0;background:#fff;cursor:pointer;flex:none}
+  .seg{display:flex;gap:4px}
+  .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:7px;height:32px;cursor:pointer;font-size:.85rem;color:var(--ink)}
+  .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .swatches{display:flex;flex-wrap:wrap;gap:7px}
+  .sw{width:30px;height:30px;border-radius:7px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+  .sw.on{box-shadow:0 0 0 2px var(--accent)}
+  .sw.none{background:repeating-linear-gradient(45deg,#fff,#fff 5px,#eee 5px,#eee 10px);position:relative}
+  .mini{background:#fff;border:1px solid var(--line);border-radius:7px;height:32px;padding:0 10px;cursor:pointer;font-size:.8rem;color:var(--ink)}
+  .mini:hover{background:var(--soft)}
+  .del{width:100%;margin-top:4px;background:#fbe9e6;color:#c0392b;border:none;border-radius:8px;height:38px;cursor:pointer;font-weight:600;font-size:.85rem}
+  .del:hover{background:#f7ddd8}
+  .layouts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .lay{border:1px solid var(--line);border-radius:8px;padding:8px;cursor:pointer;background:#fff}
+  .lay:hover{border-color:var(--accent)} .lay.on{border-color:var(--accent);box-shadow:0 0 0 2px rgba(201,122,97,.2)}
+  .lay .bars{display:flex;gap:3px;height:22px}
+  .lay .bars i{background:#e3d5c8;border-radius:3px;display:block;height:100%}
+
+  /* ---- Modales ---- */
+  .modal{position:fixed;inset:0;background:rgba(30,24,20,.5);display:none;align-items:center;justify-content:center;z-index:90;padding:18px}
+  .modal.open{display:flex}
+  .box{background:#fff;border-radius:16px;width:100%;max-width:540px;max-height:86vh;overflow:auto;padding:22px}
+  .box h3{margin:0 0 4px;font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--ink)}
+  .box .sub{margin:0 0 16px;color:var(--muted);font-size:.86rem}
+  .tabs{display:flex;gap:6px;margin-bottom:14px}
+  .tabs button{flex:1;border:1px solid var(--line);background:var(--soft);border-radius:9px;height:36px;cursor:pointer;font-weight:600;font-size:.85rem;color:var(--ink)}
+  .tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pick{border:1px solid var(--line);border-radius:11px;padding:13px;cursor:pointer;background:var(--soft);display:flex;gap:10px;align-items:center;font-size:.88rem;font-weight:600}
+  .pick:hover{border-color:var(--accent);color:var(--accent2)}
+  .pick .em{font-size:1.3rem;flex:none}
+  .pick small{display:block;font-weight:400;color:var(--muted);font-size:.76rem;margin-top:2px}
+  .blockgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+  .bpick{border:1px solid var(--line);border-radius:11px;padding:13px 8px;cursor:pointer;background:var(--soft);text-align:center;font-size:.8rem;font-weight:600}
+  .bpick:hover{border-color:var(--accent);color:var(--accent2)}
+  .bpick .em{font-size:1.5rem;display:block;margin-bottom:5px}
+  .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;margin-bottom:6px}
+  .drop:hover,.drop.over{border-color:var(--accent);background:var(--soft);color:var(--ink)}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(140px);background:#fff;border:1px solid var(--line);padding:13px 18px;border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.18);display:flex;gap:12px;align-items:center;transition:transform .3s;z-index:95;font-size:.88rem}
+  .toast.show{transform:translateX(-50%) translateY(0)} .toast.ok{border-left:4px solid #4f7d54} .toast.err{border-left:4px solid #c0504a}
+  .toast a{color:var(--accent2);font-weight:700;text-decoration:none}
+  @media(max-width:900px){.left,.right{position:absolute;top:56px;bottom:0;z-index:40;box-shadow:0 0 30px rgba(0,0,0,.14)}.left{left:0}.right{right:0}.pubstate{display:none}}
 </style>
 </head>
 <body>
   <div class="top">
-    <a href="/admin/" style="text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:9px;height:36px;display:inline-flex;align-items:center;padding:0 12px;font-size:.85rem;margin-right:4px">← Éditeur</a>
-    <span class="logo">Atelier Kairos</span><span class="beta">beta</span>
-    <span class="hint">Page&nbsp;:</span>
-    <select id="pageSel" style="height:36px;border:1px solid var(--line);border-radius:9px;padding:0 10px;font:inherit;font-size:.85rem;background:#fff;color:var(--ink);cursor:pointer">
+    <a class="back" href="/admin/">← Éditeur</a>
+    <span class="logo">Atelier&nbsp;Kairos</span><span class="beta">beta</span>
+    <span class="hint">Page :</span>
+    <select class="sel" id="pageSel">
       <option value="index.html">Accueil</option>
       <option value="accompagnements.html">Mes accompagnements</option>
       <option value="seances.html">Déroulement des séances</option>
@@ -85,282 +144,526 @@
       <option value="temoignages.html">Témoignages</option>
       <option value="faq.html">FAQ</option>
     </select>
-    <span class="hint" style="margin-left:6px">Les blocs s'ajoutent <b>en bas</b> de la page.</span>
+    <select class="sel" id="placeSel" title="Où placer vos sections">
+      <option value="bottom">↓ en bas de la page</option>
+      <option value="top">↑ en haut de la page</option>
+    </select>
     <span class="sp"></span>
-    <span id="pubState" class="hint"></span>
-    <button id="undoBtn" title="Annuler (⌘Z)" disabled>↶</button>
-    <button id="redoBtn" title="Rétablir (⌘⇧Z)" disabled>↷</button>
-    <button id="clearBtn">Tout effacer</button>
-    <button id="pubBtn" class="primary">Publier</button>
+    <div class="devices"><button id="dDesk" class="on" title="Ordinateur">🖥</button><button id="dTab" title="Tablette">▭</button><button id="dPhone" title="Mobile">📱</button></div>
+    <button class="ic" id="undoBtn" title="Annuler (⌘Z)" disabled>↺</button>
+    <button class="ic" id="redoBtn" title="Rétablir (⌘⇧Z)" disabled>↻</button>
+    <span class="pubstate" id="pubState">Publié</span>
+    <button class="primary" id="pubBtn" disabled>Publier</button>
   </div>
+
   <div class="main">
-    <aside class="palette">
-      <h2>Blocs</h2>
-      <div class="chip" draggable="false" data-t="titre"><span class="ic">𝐓</span> Titre</div>
-      <div class="chip" draggable="false" data-t="texte"><span class="ic">¶</span> Texte</div>
-      <div class="chip" draggable="false" data-t="image"><span class="ic">🖼</span> Image</div>
-      <div class="chip" draggable="false" data-t="bouton"><span class="ic">⬭</span> Bouton</div>
-      <div class="chip" draggable="false" data-t="video"><span class="ic">▶</span> Vidéo</div>
-      <div class="chip" draggable="false" data-t="separateur"><span class="ic">―</span> Séparateur</div>
-      <div class="chip" draggable="false" data-t="espace"><span class="ic">⬚</span> Espace</div>
-      <div class="note">Glissez un bloc sur la page →<br><br>• Déplacez-le en le tirant.<br>• Redimensionnez via le carré en bas à droite.<br>• Cliquez un bloc pour ouvrir ses réglages →</div>
+    <aside class="left">
+      <button class="bigadd" id="addSecBtn">＋ Ajouter une section</button>
+      <h2>Modèles rapides</h2>
+      <div class="tmpls" id="tmplList"></div>
+      <p class="note">Astuce : cliquez une section pour son fond &amp; sa disposition, un bloc pour ses réglages. Tout s'empile proprement sur mobile.</p>
     </aside>
-    <div class="stage">
-      <div class="canvas" id="canvas">
-        <div class="empty" id="empty">Glissez un bloc depuis la gauche pour commencer ✦</div>
-      </div>
-    </div>
-    <aside class="insp" id="insp">
-      <h2 id="ihead">Bloc</h2>
-      <div id="inspBody"></div>
+
+    <div class="stage"><div class="page" id="page"></div></div>
+
+    <aside class="right" id="right">
+      <div class="rh"><span class="t" id="rTitle">Réglages</span><button class="x" id="rClose">✕</button></div>
+      <div id="rBody"></div>
     </aside>
   </div>
+
+  <!-- Modale : ajouter une section -->
+  <div class="modal" id="secModal"><div class="box">
+    <h3>Ajouter une section</h3>
+    <p class="sub">Partez d'un modèle prêt à l'emploi, ou d'une disposition vierge.</p>
+    <div class="tabs"><button class="on" data-t="tmpl">Modèles</button><button data-t="blank">Disposition vierge</button></div>
+    <div id="secTmpl" class="grid"></div>
+    <div id="secBlank" class="layouts" style="display:none"></div>
+    <div class="actions"><button class="mini" id="secCancel">Annuler</button></div>
+  </div></div>
+
+  <!-- Modale : ajouter un bloc -->
+  <div class="modal" id="blkModal"><div class="box" style="max-width:480px">
+    <h3>Ajouter un bloc</h3>
+    <p class="sub">Choisissez le type de contenu à insérer.</p>
+    <div class="blockgrid" id="blkGrid"></div>
+    <div class="actions"><button class="mini" id="blkCancel">Annuler</button></div>
+  </div></div>
+
+  <!-- Modale : image -->
+  <div class="modal" id="imgModal"><div class="box" style="max-width:440px">
+    <h3>Choisir une image</h3>
+    <p class="sub">Importez un fichier de votre appareil, ou collez un lien.</p>
+    <div class="drop" id="imgDrop">📁 Cliquez ou glissez une image ici</div>
+    <input type="file" id="imgFile" accept="image/*" hidden>
+    <label style="display:block;font-size:.78rem;font-weight:600;margin:12px 0 6px">Adresse d'une image (lien)</label>
+    <input type="text" id="imgUrl" placeholder="https://…" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;font:inherit">
+    <div class="actions"><button class="mini" id="imgCancel">Annuler</button><button class="primary" id="imgOk">Utiliser</button></div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-const COLS=12, ROW=44;
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-const canvas=document.getElementById("canvas");
-function cellW(){return canvas.clientWidth/COLS;}
-function snap(v,step){return Math.round(v/step)*step;}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-function refreshEmpty(){document.getElementById("empty").style.display=canvas.querySelector(".blk")?"none":"flex";}
+"use strict";
+/* ============================================================
+   Atelier Kairos — Composeur de pages (sections → colonnes → blocs)
+   Écrit pages.json via /admin/api/publish. Aperçu fidèle (styles.css).
+   ============================================================ */
+const $=s=>document.getElementById(s);
+const uid=()=>"x"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const clone=o=>JSON.parse(JSON.stringify(o));
 
-function makeBlock(type,left,top){
-  const w=cellW();
-  const el=document.createElement("div");
-  el.className="blk "+type;
-  // dimensions par défaut (en cellules)
-  let cw=4, rh=type==="titre"?2:type==="bouton"?2:3;
-  if(type==="image"){cw=4;rh=5;}
-  if(type==="separateur"){cw=8;rh=1;}
-  if(type==="espace"){cw=12;rh=2;}
-  if(type==="video"){cw=6;rh=5;}
-  el.style.width=(cw*w)+"px";
-  el.style.height=(rh*ROW)+"px";
-  el.style.left=clamp(snap(left,w),0,(COLS-cw)*w)+"px";
-  el.style.top=Math.max(0,snap(top,ROW))+"px";
-  let inner='';
-  if(type==="titre")inner='<h2 contenteditable="true">Votre titre</h2>';
-  else if(type==="texte")inner='<p contenteditable="true">Votre texte ici. Cliquez pour le modifier.</p>';
-  else if(type==="image")inner='🖼';
-  else if(type==="bouton")inner='<a class="btn" contenteditable="true">Bouton</a>';
-  else if(type==="separateur")inner='<div class="sepline"></div>';
-  else if(type==="espace")inner='';
-  else if(type==="video")inner='<div>▶<br><small>Ajoutez un lien YouTube/Vimeo dans les réglages →</small></div>';
-  el.innerHTML='<div class="move"></div><div class="inner">'+inner+'</div>'+
-    '<div class="bar"><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button></div>'+
-    '<div class="rs" title="Redimensionner"></div>';
-  el.style.zIndex=++ZTOP;
-  canvas.appendChild(el);
-  wireBlock(el);
-  refreshEmpty();
-  return el;
+/* ---------- Palette de couleurs (fond de section) ---------- */
+const SWATCHES=[
+  {k:"",label:"Aucun (transparent)"},
+  {k:"#F8F5F1",label:"Coquillage"},
+  {k:"#EADFD7",label:"Beige rosé"},
+  {k:"#E7D7C3",label:"Sable"},
+  {k:"#C97A61",label:"Terracotta"},
+  {k:"#6B4F43",label:"Cacao"},
+  {k:"#AFC8D6",label:"Océan"},
+  {k:"#B8C0A6",label:"Sauge"}
+];
+
+/* ---------- Dispositions vierges ---------- */
+const LAYOUTS=[
+  {label:"1 colonne",spans:[12]},
+  {label:"2 colonnes",spans:[6,6]},
+  {label:"3 colonnes",spans:[4,4,4]},
+  {label:"4 colonnes",spans:[3,3,3,3]},
+  {label:"Large + étroite",spans:[8,4]},
+  {label:"Étroite + large",spans:[4,8]}
+];
+
+/* ---------- Types de blocs ---------- */
+const BLOCKTYPES=[
+  {t:"heading",em:"𝐓",label:"Titre"},
+  {t:"text",em:"¶",label:"Texte"},
+  {t:"image",em:"🖼",label:"Image"},
+  {t:"button",em:"⬭",label:"Bouton"},
+  {t:"video",em:"▶",label:"Vidéo"},
+  {t:"gallery",em:"🖻",label:"Galerie"},
+  {t:"quote",em:"❝",label:"Citation"},
+  {t:"list",em:"✓",label:"Liste"},
+  {t:"map",em:"📍",label:"Carte"},
+  {t:"spacer",em:"↕",label:"Espace"},
+  {t:"divider",em:"―",label:"Trait"},
+  {t:"embed",em:"</>",label:"Code"}
+];
+function blockDefault(t){
+  switch(t){
+    case"heading":return{type:"heading",level:"h2",html:"Votre titre",align:"left"};
+    case"text":return{type:"text",html:"<p>Votre texte ici. Cliquez pour le modifier.</p>",align:"left"};
+    case"image":return{type:"image",src:"",alt:""};
+    case"button":return{type:"button",label:"En savoir plus",href:"contact.html",style:"plein",align:"left"};
+    case"video":return{type:"video",url:""};
+    case"gallery":return{type:"gallery",images:[],cols:3};
+    case"quote":return{type:"quote",html:"Une parole qui compte.",author:""};
+    case"list":return{type:"list",items:[{icon:"✦",text:"Premier élément"},{icon:"✦",text:"Deuxième élément"}]};
+    case"map":return{type:"map",query:"France"};
+    case"spacer":return{type:"spacer",h:40};
+    case"divider":return{type:"divider"};
+    case"embed":return{type:"embed",html:"<!-- Collez ici un code d'intégration -->"};
+  }
+  return{type:"text",html:"<p>Texte</p>"};
 }
 
-function wireBlock(el){
-  el.addEventListener("mousedown",()=>select(el));
-  el.querySelector(".bar").addEventListener("click",e=>{
-    const b=e.target.closest("button"); if(!b)return; e.stopPropagation();
-    if(b.dataset.a==="del"){el.remove();select(null);refreshEmpty();}
-    else if(b.dataset.a==="dup"){dupBlock(el);}
-  });
-  // déplacement
-  const move=el.querySelector(".move");
-  move.addEventListener("pointerdown",e=>{
-    e.preventDefault();select(el);el.classList.add("dragging");
-    const r=el.getBoundingClientRect(),cr=canvas.getBoundingClientRect();
-    const ox=e.clientX-r.left, oy=e.clientY-r.top;
-    function mv(ev){let l=ev.clientX-cr.left-ox, t=ev.clientY-cr.top-oy;el.style.left=clamp(l,0,canvas.clientWidth-el.offsetWidth)+"px";el.style.top=Math.max(0,t)+"px";}
-    function up(){const w=cellW();el.style.left=clamp(snap(parseFloat(el.style.left),w),0,canvas.clientWidth-el.offsetWidth)+"px";el.style.top=Math.max(0,snap(parseFloat(el.style.top),ROW))+"px";el.classList.remove("dragging");document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);}
-    document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
-  });
-  // redimensionnement
-  el.querySelector(".rs").addEventListener("pointerdown",e=>{
-    e.preventDefault();e.stopPropagation();select(el);el.classList.add("sizing");
-    const cr=canvas.getBoundingClientRect(),sl=parseFloat(el.style.left),st=parseFloat(el.style.top);
-    function mv(ev){el.style.width=Math.max(cellW(),ev.clientX-cr.left-sl)+"px";el.style.height=Math.max(ROW,ev.clientY-cr.top-st)+"px";}
-    function up(){const w=cellW();el.style.width=clamp(snap(el.offsetWidth,w),w,(COLS- Math.round(sl/w))*w)+"px";el.style.height=Math.max(ROW,snap(el.offsetHeight,ROW))+"px";el.classList.remove("sizing");document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);}
-    document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
-  });
-}
+/* ---------- Modèles de sections prêts à l'emploi ---------- */
+function tpl_hero(){return{id:uid(),bg:{img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1900&q=80",overlay:.5},pad:"xl",width:"narrow",cols:[{span:12,blocks:[
+  {id:uid(),type:"heading",level:"h2",html:"Un titre qui accueille en douceur",align:"center"},
+  {id:uid(),type:"text",html:"<p>Quelques mots chaleureux pour présenter cette section.</p>",align:"center"},
+  {id:uid(),type:"button",label:"Prendre rendez-vous",href:"contact.html",style:"light",align:"center"}
+]}]};}
+function tpl_textimg(){return{id:uid(),bg:"",pad:"lg",width:"normal",cols:[
+  {span:6,blocks:[{id:uid(),type:"heading",level:"h2",html:"Faire connaissance",align:"left"},{id:uid(),type:"text",html:"<p>Présentez ici votre approche, en quelques phrases simples et humaines.</p>",align:"left"},{id:uid(),type:"button",label:"Me contacter",href:"contact.html",style:"ghost",align:"left"}]},
+  {span:6,blocks:[{id:uid(),type:"image",src:"https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80",alt:"",ratio:"4/5"}]}
+]};}
+function tpl_cards(){const c=(t,d)=>({span:4,blocks:[{id:uid(),type:"image",src:"https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=700&q=70",alt:"",ratio:"3/2"},{id:uid(),type:"heading",level:"h3",html:t,align:"left"},{id:uid(),type:"text",html:"<p>"+d+"</p>",align:"left"}]});
+  return{id:uid(),bg:"#EADFD7",pad:"lg",width:"normal",cols:[c("Sophrologie","Retrouver un souffle et de l'apaisement."),c("Relation d'aide","Être écouté et accompagné avec attention."),c("Accompagnement","Avancer à votre rythme, en confiance.")]};}
+function tpl_steps(){return{id:uid(),bg:"",pad:"lg",width:"narrow",cols:[{span:12,blocks:[
+  {id:uid(),type:"heading",level:"h2",html:"Comment ça se passe",align:"center"},
+  {id:uid(),type:"list",items:[{icon:"1",text:"<b>Prise de contact</b> — on échange sur ce qui vous amène."},{icon:"2",text:"<b>Première séance</b> — on apprend à se connaître, sans pression."},{icon:"3",text:"<b>Accompagnement</b> — on avance pas à pas, à votre rythme."}]}
+]}]};}
+function tpl_pricing(){const p=(t,pr,d)=>({span:6,blocks:[{id:uid(),type:"heading",level:"h3",html:t,align:"center"},{id:uid(),type:"heading",level:"h2",html:pr,align:"center",color:"#C97A61"},{id:uid(),type:"text",html:"<p style='text-align:center'>"+d+"</p>",align:"center"}]});
+  return{id:uid(),bg:"#F8F5F1",pad:"lg",width:"normal",cols:[p("Séance individuelle","60 €","Séance de 1h, en présentiel ou visio."),p("Atelier de groupe","25 €","Ateliers thématiques en petit groupe.")]};}
+function tpl_quote(){return{id:uid(),bg:"#E7D7C3",pad:"lg",width:"narrow",cols:[{span:12,blocks:[
+  {id:uid(),type:"quote",html:"« Vous n'avez pas à traverser seul ce que la vie vous demande parfois de porter. »",author:"Atelier Kairos"}
+]}]};}
+function tpl_gallery(){const im=u=>({src:u,alt:""});return{id:uid(),bg:"",pad:"lg",width:"normal",cols:[{span:12,blocks:[
+  {id:uid(),type:"heading",level:"h2",html:"En images",align:"center"},
+  {id:uid(),type:"gallery",cols:3,images:[im("https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=600&q=70"),im("https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=600&q=70"),im("https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=600&q=70")]}
+]}]};}
+function tpl_cta(){return{id:uid(),bg:"#C97A61",pad:"lg",width:"narrow",cols:[{span:12,blocks:[
+  {id:uid(),type:"heading",level:"h2",html:"Chaque démarche commence par un premier pas",align:"center"},
+  {id:uid(),type:"text",html:"<p style='text-align:center'>Je serai heureuse d'échanger avec vous, en toute confidentialité.</p>",align:"center"},
+  {id:uid(),type:"button",label:"Prendre rendez-vous",href:"contact.html",style:"light",align:"center"}
+]}]};}
+function tpl_contact(){return{id:uid(),bg:"",pad:"lg",width:"normal",cols:[
+  {span:6,blocks:[{id:uid(),type:"heading",level:"h2",html:"Me contacter",align:"left"},{id:uid(),type:"list",items:[{icon:"✉️",text:"contact@atelier-kairos.com"},{icon:"📞",text:"XX XX XX XX XX"},{icon:"📍",text:"Adresse du cabinet"}]}]},
+  {span:6,blocks:[{id:uid(),type:"map",query:"France"}]}
+]};}
+const TEMPLATES=[
+  {key:"hero",em:"🌅",label:"Bandeau d'accueil",sub:"Image + titre + bouton",make:tpl_hero},
+  {key:"textimg",em:"🧩",label:"Texte + image",sub:"2 colonnes",make:tpl_textimg},
+  {key:"cards",em:"🗂",label:"3 cartes",sub:"Services / atouts",make:tpl_cards},
+  {key:"steps",em:"📋",label:"Étapes",sub:"Liste numérotée",make:tpl_steps},
+  {key:"pricing",em:"🏷",label:"Tarifs",sub:"2 offres",make:tpl_pricing},
+  {key:"quote",em:"❝",label:"Citation",sub:"Mise en avant",make:tpl_quote},
+  {key:"gallery",em:"🖼",label:"Galerie",sub:"Grille de photos",make:tpl_gallery},
+  {key:"cta",em:"📣",label:"Bandeau d'appel",sub:"Invitation + bouton",make:tpl_cta},
+  {key:"contact",em:"✉️",label:"Contact",sub:"Infos + carte",make:tpl_contact}
+];
 
-let selEl=null, ZTOP=100, ZBOT=100;
-function select(el){if(selEl)selEl.classList.remove("sel");selEl=el;if(el)el.classList.add("sel");buildInsp(el);}
-canvas.addEventListener("pointerdown",e=>{if(e.target===canvas||e.target.id==="empty")select(null);});
+/* ---------- État ---------- */
+let DATA={}, TARGET="index.html", device="";
+let sel={kind:null,secId:null,colIdx:null,blkId:null};
+let dirty=false, pendingImages=[], imgCtx=null;
+let HIST=[], HI=-1, lastKey=null;
+const DRAFT=()=>"kairos_pages_"+TARGET;
 
-/* ===== Panneau de réglages ===== */
-const SIZES=[["Petit","16px"],["Normal","20px"],["Moyen","26px"],["Grand","34px"],["Très grand","46px"]];
-function blockType(el){return ["titre","texte","image","bouton","separateur","espace","video"].find(c=>el.classList.contains(c));}
+function page(){DATA[TARGET]=DATA[TARGET]||{place:"bottom",sections:[]};return DATA[TARGET];}
+function secs(){return page().sections;}
+function findSec(id){return secs().find(s=>s.id===id);}
+function findBlk(secId,colIdx,blkId){const s=findSec(secId);if(!s)return null;const c=s.cols[colIdx];if(!c)return null;return(c.blocks||[]).find(b=>b.id===blkId);}
+
+/* ---------- Rendu d'un bloc (identique au moteur public app.js) ---------- */
 function ytId(u){const m=(u||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{6,})/);return m?m[1]:null;}
 function vimeoId(u){const m=(u||"").match(/vimeo\.com\/(?:video\/)?(\d+)/);return m?m[1]:null;}
-function setVideo(el,url){const inner=el.querySelector(".inner");url=(url||"").trim();if(!url){inner.innerHTML='<div>▶<br><small>Ajoutez un lien YouTube/Vimeo dans les réglages →</small></div>';return;}let src=url;const y=ytId(url),v=vimeoId(url);if(y)src="https://www.youtube.com/embed/"+y;else if(v)src="https://player.vimeo.com/video/"+v;inner.innerHTML='<iframe src="'+src+'" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';}
-function labelOf(t){return {titre:"Titre",texte:"Texte",image:"Image",bouton:"Bouton",separateur:"Séparateur",espace:"Espace"}[t]||"Bloc";}
-function getC(el){const t=blockType(el);if(t==="titre")return el.querySelector("h2");if(t==="texte")return el.querySelector("p");if(t==="bouton")return el.querySelector("a.btn");return el.querySelector(".inner");}
-function toHex(c){if(!c)return"";if(c[0]==="#")return c;const m=(""+c).match(/\d+/g);if(!m)return"";return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("");}
-function esc(s){return (s||"").replace(/"/g,"&quot;");}
-function setImg(el,url){const inner=el.querySelector(".inner");if(!url){inner.innerHTML="🖼";return;}let img=el.querySelector("img");if(!img){inner.innerHTML="";img=document.createElement("img");img.style.objectFit="cover";inner.appendChild(img);}img.src=url;}
-function dupBlock(el){const c=makeBlock(blockType(el),parseFloat(el.style.left)+20,parseFloat(el.style.top)+20);c.querySelector(".inner").innerHTML=el.querySelector(".inner").innerHTML;c.style.width=el.style.width;c.style.height=el.style.height;if(el.style.backgroundColor)c.style.backgroundColor=el.style.backgroundColor;select(c);}
-
-function buildInsp(el){
-  const insp=document.getElementById("insp"), body=document.getElementById("inspBody");
-  if(!el){insp.classList.remove("open");return;}
-  insp.classList.add("open");
-  const type=blockType(el);
-  document.getElementById("ihead").textContent="Réglages — "+labelOf(type);
-  let h="";
-  if(type==="texte"||type==="titre"){
-    const c=getC(el), al=c.style.textAlign||"left";
-    h+=`<label>Alignement</label><div class="seg" data-ctl="align"><button data-v="left" class="${al==='left'?'on':''}">⬅</button><button data-v="center" class="${al==='center'?'on':''}">↔</button><button data-v="right" class="${al==='right'?'on':''}">➡</button></div>`;
-    h+=`<label>Taille</label><select data-ctl="size"><option value="">Par défaut</option>${SIZES.map(s=>`<option value="${s[1]}" ${s[1]===c.style.fontSize?'selected':''}>${s[0]}</option>`).join("")}</select>`;
-    h+=`<label>Couleur du texte</label><div class="row2"><input type="color" data-ctl="color" value="${toHex(c.style.color)||'#3a2e27'}"><button class="mini" data-ctl="colorReset">Auto</button></div>`;
-    h+=`<label>Style</label><div class="seg"><button data-ctl="bold" class="${(parseInt(c.style.fontWeight)>=600)?'on':''}"><b>B</b></button><button data-ctl="italic" class="${c.style.fontStyle==='italic'?'on':''}"><i>I</i></button></div>`;
-  }
-  if(type==="bouton"){
-    const a=getC(el), j=el.querySelector(".inner").style.justifyContent, cur=j==="center"?"center":j==="flex-end"?"right":"left";
-    const st=a.classList.contains("btn--light")?"light":a.classList.contains("btn--ghost")?"ghost":"plein";
-    h+=`<label>Texte du bouton</label><input type="text" data-ctl="blabel" value="${esc(a.textContent)}">`;
-    h+=`<label>Lien</label><input type="text" data-ctl="bhref" placeholder="page.html ou https://…" value="${esc(a.getAttribute('href'))}">`;
-    h+=`<label>Style</label><select data-ctl="bstyle">${[["plein","Plein"],["light","Clair"],["ghost","Contour"]].map(o=>`<option value="${o[0]}" ${o[0]===st?'selected':''}>${o[1]}</option>`).join("")}</select>`;
-    h+=`<label>Alignement</label><div class="seg" data-ctl="balign"><button data-v="left" class="${cur==='left'?'on':''}">⬅</button><button data-v="center" class="${cur==='center'?'on':''}">↔</button><button data-v="right" class="${cur==='right'?'on':''}">➡</button></div>`;
-  }
-  if(type==="video"){
-    const ifr=el.querySelector("iframe");
-    h+=`<label>Lien vidéo (YouTube / Vimeo)</label><input type="text" data-ctl="vurl" placeholder="https://youtu.be/…" value="${ifr?esc(ifr.getAttribute('src')):''}">`;
-  }
-  if(type==="image"){
-    const img=el.querySelector("img");
-    h+=`<label>Lien de l'image (URL)</label><input type="text" data-ctl="isrc" placeholder="https://…" value="${img?esc(img.getAttribute('src')):''}">`;
-    h+=`<label>Texte alternatif</label><input type="text" data-ctl="ialt" value="${img?esc(img.getAttribute('alt')):''}">`;
-    h+=`<label>Remplissage</label><select data-ctl="ifit"><option value="cover" ${img&&img.style.objectFit==='contain'?'':'selected'}>Remplir (couper)</option><option value="contain" ${img&&img.style.objectFit==='contain'?'selected':''}>Entier (sans couper)</option></select>`;
-  }
-  h+=`<label>Couleur de fond du bloc</label><div class="row2"><input type="color" data-ctl="bg" value="${toHex(el.style.backgroundColor)||'#ffffff'}"><button class="mini" data-ctl="bgReset">Aucune</button></div>`;
-  h+=`<label>Disposition</label><div class="seg"><button class="mini" data-ctl="front" style="flex:1">Avancer</button><button class="mini" data-ctl="back" style="flex:1">Reculer</button><button class="mini" data-ctl="dup" style="flex:1">Dupliquer</button></div>`;
-  h+=`<button class="del" data-ctl="del">🗑 Supprimer ce bloc</button>`;
-  body.innerHTML=h;
-  wireInsp(el,type);
+function blockHTML(b){
+  const p=b||{},t=p.type,al=x=>x?("text-align:"+x+";"):"";
+  if(t==="heading"){const lvl=(p.level==="h1"?"h1":p.level==="h3"?"h3":p.level==="h4"?"h4":"h2");const st=al(p.align)+(p.color?("color:"+p.color+";"):"")+(p.size?("font-size:"+p.size+";"):"");return "<"+lvl+' class="kx2-h" style="'+st+'">'+(p.html||"Titre")+"</"+lvl+">";}
+  if(t==="text")return '<div class="kx2-rt" style="'+al(p.align)+'">'+(p.html||"<p>Votre texte</p>")+"</div>";
+  if(t==="image"){if(!p.src)return '<div class="kxe-imgph">🖼 Ajouter une image</div>';const ist=(p.radius?("border-radius:"+p.radius+";"):"")+(p.fit?("object-fit:"+p.fit+";"):"")+(p.ratio?("aspect-ratio:"+p.ratio+";object-fit:cover;"):"");const img='<img src="'+esc(pvw(p.src))+'" alt="'+esc(p.alt||"")+'" style="'+ist+'">';return p.href?('<a href="'+esc(p.href)+'">'+img+"</a>"):img;}
+  if(t==="button"){const cls="btn"+(p.style==="light"?" btn--light":p.style==="ghost"?" btn--ghost":"");return '<div class="kx2-btnwrap" style="'+al(p.align||"left")+'"><a class="'+cls+'" href="'+esc(p.href||"#")+'">'+esc(p.label||"Bouton")+"</a></div>";}
+  if(t==="video"){const u=p.url||"";let src="";const y=ytId(u),v=vimeoId(u);if(y)src="https://www.youtube.com/embed/"+y;else if(v)src="https://player.vimeo.com/video/"+v;else src=u;return src?('<div class="kx2-video"><iframe src="'+esc(src)+'" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>'):'<div class="kxe-imgph">▶ Ajouter un lien vidéo</div>';}
+  if(t==="gallery"){const imgs=p.images||[];if(!imgs.length)return '<div class="kxe-imgph">🖻 Galerie vide — ajoutez des images</div>';return '<div class="kx2-gallery" style="grid-template-columns:repeat('+(p.cols||3)+',1fr)">'+imgs.map(g=>'<img src="'+esc(pvw(g.src||""))+'" alt="'+esc(g.alt||"")+'">').join("")+"</div>";}
+  if(t==="quote")return '<blockquote class="kx2-quote">'+(p.html||"Citation")+(p.author?("<cite>"+esc(p.author)+"</cite>"):"")+"</blockquote>";
+  if(t==="list"){const items=p.items||[];return '<ul class="kx2-list">'+items.map(it=>"<li><span class=\"kx2-ic\">"+esc(it.icon||"✦")+"</span><span>"+(it.text||"")+"</span></li>").join("")+"</ul>";}
+  if(t==="spacer")return '<div class="kx2-spacer" style="height:'+(p.h||40)+'px"></div>';
+  if(t==="divider")return '<hr class="kx2-hr">';
+  if(t==="map")return '<div class="kx2-map"><iframe src="https://www.google.com/maps?q='+encodeURIComponent(p.query||"France")+'&output=embed" loading="lazy"></iframe></div>';
+  if(t==="embed")return '<div class="kx2-embed">'+(p.html||"")+"</div>";
+  return "";
 }
+/* aperçu des images importées (data URL) avant publication */
+function pvw(v){if(typeof v==="string"&&v.indexOf("/images/")===0){const pi=pendingImages.find(i=>("/images/"+i.name)===v);if(pi)return"data:"+(pi.mime||"image/png")+";base64,"+pi.data;}return v;}
 
-function wireInsp(el,type){
-  const body=document.getElementById("inspBody");
-  const q=ctl=>body.querySelector('[data-ctl="'+ctl+'"]');
-  function segWire(ctl,fn){const s=body.querySelector('.seg[data-ctl="'+ctl+'"]');if(!s)return;s.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{s.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));fn(b.dataset.v);}));}
-  const c=getC(el);
-  segWire("align",v=>{c.style.textAlign=v;});
-  if(q("size"))q("size").addEventListener("change",e=>{c.style.fontSize=e.target.value;});
-  if(q("color"))q("color").addEventListener("input",e=>{c.style.color=e.target.value;});
-  if(q("colorReset"))q("colorReset").addEventListener("click",()=>{c.style.color="";buildInsp(el);});
-  const boldBtn=q("bold");if(boldBtn)boldBtn.addEventListener("click",()=>{const on=!(parseInt(c.style.fontWeight)>=600);c.style.fontWeight=on?"700":"400";boldBtn.classList.toggle("on",on);});
-  const itBtn=q("italic");if(itBtn)itBtn.addEventListener("click",()=>{const on=c.style.fontStyle!=="italic";c.style.fontStyle=on?"italic":"normal";itBtn.classList.toggle("on",on);});
-  if(q("blabel"))q("blabel").addEventListener("input",e=>{c.textContent=e.target.value;});
-  if(q("bhref"))q("bhref").addEventListener("input",e=>{c.setAttribute("href",e.target.value||"#");});
-  if(q("bstyle"))q("bstyle").addEventListener("change",e=>{c.classList.remove("btn--light","btn--ghost");if(e.target.value==="light")c.classList.add("btn--light");if(e.target.value==="ghost")c.classList.add("btn--ghost");});
-  segWire("balign",v=>{el.querySelector(".inner").style.justifyContent=v==="center"?"center":v==="right"?"flex-end":"flex-start";});
-  if(q("vurl"))q("vurl").addEventListener("change",e=>{setVideo(el,e.target.value.trim());});
-  if(q("isrc"))q("isrc").addEventListener("change",e=>{setImg(el,e.target.value.trim());});
-  if(q("ialt"))q("ialt").addEventListener("input",e=>{const im=el.querySelector("img");if(im)im.alt=e.target.value;});
-  if(q("ifit"))q("ifit").addEventListener("change",e=>{const im=el.querySelector("img");if(im)im.style.objectFit=e.target.value;});
-  if(q("bg"))q("bg").addEventListener("input",e=>{el.style.backgroundColor=e.target.value;});
-  if(q("bgReset"))q("bgReset").addEventListener("click",()=>{el.style.backgroundColor="";buildInsp(el);});
-  if(q("front"))q("front").addEventListener("click",()=>{el.style.zIndex=++ZTOP;});
-  if(q("back"))q("back").addEventListener("click",()=>{el.style.zIndex=(ZBOT=Math.max(1,ZBOT-1));});
-  if(q("dup"))q("dup").addEventListener("click",()=>dupBlock(el));
-  if(q("del"))q("del").addEventListener("click",()=>{el.remove();select(null);refreshEmpty();});
+/* ---------- Rendu de la scène ---------- */
+function rebuild(){
+  const host=$("page");host.className="page"+(device?" "+device:"")+(device==="phone"?" kxe-stack":"");
+  host.innerHTML="";
+  const list=secs();
+  if(!list.length){host.innerHTML='<div class="empty"><div class="e1">Votre page est prête à être composée</div><div>Cliquez « ＋ Ajouter une section » à gauche, ou choisissez un modèle.</div></div>';return;}
+  list.forEach(s=>host.appendChild(secEl(s)));
+  applyHighlight();
 }
-
-// glisser depuis la palette
-document.querySelectorAll(".chip").forEach(chip=>{
-  chip.addEventListener("pointerdown",e=>{
-    e.preventDefault();
-    const type=chip.dataset.t;
-    const ghost=document.createElement("div");ghost.className="ghost";ghost.textContent=chip.textContent.trim();document.body.appendChild(ghost);
-    function mv(ev){ghost.style.left=ev.clientX+"px";ghost.style.top=ev.clientY+"px";}
-    function up(ev){
-      ghost.remove();document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);
-      const cr=canvas.getBoundingClientRect();
-      if(ev.clientX>=cr.left&&ev.clientX<=cr.right&&ev.clientY>=cr.top&&ev.clientY<=cr.bottom){
-        select(makeBlock(type,ev.clientX-cr.left-cellW()*2,ev.clientY-cr.top-ROW));
-      }
+function secEl(s){
+  const sec=document.createElement("section");
+  sec.className="kx2-sec kxe-sec kx2-pad-"+(s.pad||"lg");sec.setAttribute("data-sec",s.id);
+  const bg=s.bg;
+  if(bg){if(typeof bg==="object"&&bg.img){sec.style.backgroundImage="url('"+bg.img+"')";sec.classList.add("kx2-bgimg");if(bg.overlay!=null)sec.style.setProperty("--kx2-ov",bg.overlay);}else sec.style.background=bg;}
+  // outils de section
+  const tools=document.createElement("div");tools.className="kxe-sectools";
+  tools.innerHTML='<button data-a="up" title="Monter">↑</button><button data-a="down" title="Descendre">↓</button><button data-a="cfg" title="Réglages">⚙</button><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button>';
+  tools.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;e.stopPropagation();secAction(s,b.dataset.a);});
+  sec.appendChild(tools);
+  const inner=document.createElement("div");inner.className="kx2-inner kx2-w-"+(s.width||"normal");
+  const grid=document.createElement("div");grid.className="kx2-grid";
+  (s.cols||[]).forEach((c,ci)=>{
+    const col=document.createElement("div");col.className="kx2-col kxe-col";col.style.gridColumn="span "+(c.span||12);
+    (c.blocks||[]).forEach(b=>col.appendChild(blkEl(s,ci,b)));
+    const add=document.createElement("button");add.className="kxe-addblk";add.textContent="＋ Ajouter un bloc";
+    add.addEventListener("click",e=>{e.stopPropagation();openBlockPicker(s.id,ci);});
+    col.appendChild(add);
+    grid.appendChild(col);
+  });
+  inner.appendChild(grid);sec.appendChild(inner);
+  sec.addEventListener("click",e=>{if(e.target.closest(".kxe-blk")||e.target.closest(".kxe-addblk")||e.target.closest(".kxe-sectools"))return;selectSection(s.id);});
+  return sec;
+}
+function blkEl(s,ci,b){
+  const wrap=document.createElement("div");wrap.className="kxe-blk";wrap.setAttribute("data-blk",b.id);
+  const inner=document.createElement("div");inner.className="kx2-blk kx2-"+b.type;inner.innerHTML=blockHTML(b);
+  wrap.appendChild(inner);
+  const tools=document.createElement("div");tools.className="kxe-blktools";
+  tools.innerHTML='<button data-a="up" title="Monter">↑</button><button data-a="down" title="Descendre">↓</button><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button>';
+  tools.addEventListener("click",e=>{const btn=e.target.closest("button");if(!btn)return;e.stopPropagation();blkAction(s,ci,b,btn.dataset.a);});
+  wrap.appendChild(tools);
+  // édition en ligne pour titre & texte
+  if(b.type==="heading"||b.type==="text"){
+    const ed=b.type==="heading"?inner.querySelector(".kx2-h"):inner.querySelector(".kx2-rt");
+    if(ed){ed.setAttribute("contenteditable","true");
+      ed.addEventListener("input",()=>{beginChange("edit:"+b.id);b.html=ed.innerHTML;markDirty();});
+      ed.addEventListener("blur",commitChange);
+      ed.addEventListener("paste",e=>{e.preventDefault();document.execCommand("insertText",false,(e.clipboardData||window.clipboardData).getData("text"));});
     }
-    mv(e);document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
+  }
+  wrap.addEventListener("click",e=>{if(e.target.closest(".kxe-blktools"))return;e.stopPropagation();selectBlock(s.id,ci,b.id);
+    if(b.type==="image"){openImage({block:b});}
   });
-});
-
-document.getElementById("clearBtn").addEventListener("click",()=>{if(confirm("Tout effacer ?")){canvas.querySelectorAll(".blk").forEach(b=>b.remove());refreshEmpty();}});
-window.addEventListener("resize",refreshEmpty);
-
-/* ===== Chargement / sérialisation / publication (zones sur pages existantes) ===== */
-let TARGET=document.getElementById("pageSel").value, ALLBLOCKS={};
-function currentZone(){const p=ALLBLOCKS[TARGET];return p&&p.zones&&p.zones[0]?p.zones[0]:null;}
-function loadBlock(b){
-  const el=makeBlock(b.t,0,0);const W=canvas.clientWidth;
-  el.style.left=(b.x/100*W)+"px";el.style.top=(b.y||0)+"px";
-  el.style.width=(b.w/100*W)+"px";el.style.height=(b.h||80)+"px";
-  if(b.z)el.style.zIndex=b.z;if(b.bg)el.style.backgroundColor=b.bg;
-  const inner=el.querySelector(".inner");if(b.is)inner.style.cssText=b.is;if(typeof b.html==="string")inner.innerHTML=b.html;
-  return el;
+  return wrap;
 }
-function serializeBlocks(){
-  const W=canvas.clientWidth||1100;let maxB=200;
-  const blocks=[...canvas.querySelectorAll(".blk")].map(el=>{
-    const inner=el.querySelector(".inner");const tmp=inner.cloneNode(true);tmp.querySelectorAll("[contenteditable]").forEach(n=>n.removeAttribute("contenteditable"));
-    const y=Math.round(parseFloat(el.style.top)||0),h=Math.round(parseFloat(el.style.height)||80);maxB=Math.max(maxB,y+h);
-    return {t:blockType(el),x:+(parseFloat(el.style.left)/W*100).toFixed(2),y:y,w:+(parseFloat(el.style.width)/W*100).toFixed(2),h:h,z:parseInt(el.style.zIndex)||1,bg:el.style.backgroundColor||"",is:inner.getAttribute("style")||"",html:tmp.innerHTML};
-  });
-  return {blocks:blocks,h:maxB+50};
-}
-function clearCanvas(){canvas.querySelectorAll(".blk").forEach(b=>b.remove());select(null);refreshEmpty();}
-function loadZoneToCanvas(){
-  clearCanvas();const z=currentZone();
-  if(z&&z.blocks)z.blocks.slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);
-  refreshEmpty();
-  HIST=[];HI=-1;pushHistory();
+function applyHighlight(){
+  document.querySelectorAll(".kxe-selsec").forEach(n=>n.classList.remove("kxe-selsec"));
+  document.querySelectorAll(".kxe-selblk").forEach(n=>n.classList.remove("kxe-selblk"));
+  if(sel.kind==="section"&&sel.secId){const el=document.querySelector('[data-sec="'+sel.secId+'"]');if(el)el.classList.add("kxe-selsec");}
+  if(sel.kind==="block"&&sel.blkId){const el=document.querySelector('[data-blk="'+sel.blkId+'"]');if(el)el.classList.add("kxe-selblk");}
 }
 
-/* ===== Annuler / Rétablir + clavier ===== */
-let HIST=[],HI=-1,_rt=null;
-function snapBlocks(){return JSON.stringify(serializeBlocks().blocks);}
-function pushHistory(){const s=snapBlocks();if(HI>=0&&HIST[HI]===s)return;HIST=HIST.slice(0,HI+1);HIST.push(s);HI=HIST.length-1;if(HIST.length>120){HIST.shift();HI--;}updUndo();}
-function recordSoon(){clearTimeout(_rt);_rt=setTimeout(pushHistory,300);}
-function restore(json){canvas.querySelectorAll(".blk").forEach(b=>b.remove());select(null);JSON.parse(json).slice().sort((a,b)=>(a.z||0)-(b.z||0)).forEach(loadBlock);refreshEmpty();}
-function undo(){if(HI>0){HI--;restore(HIST[HI]);updUndo();}}
-function redo(){if(HI<HIST.length-1){HI++;restore(HIST[HI]);updUndo();}}
-function updUndo(){const u=document.getElementById("undoBtn"),r=document.getElementById("redoBtn");if(u)u.disabled=HI<=0;if(r)r.disabled=HI>=HIST.length-1;}
-document.addEventListener("pointerup",recordSoon,true);
-document.addEventListener("input",recordSoon,true);
-document.addEventListener("change",recordSoon,true);
-document.addEventListener("keydown",e=>{
-  const t=(e.target.tagName||"").toLowerCase();const editing=e.target.isContentEditable||t==="input"||t==="select"||t==="textarea";
-  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="z"){e.preventDefault();if(e.shiftKey)redo();else undo();return;}
-  if((e.key==="Delete"||e.key==="Backspace")&&selEl&&!editing){e.preventDefault();selEl.remove();select(null);refreshEmpty();pushHistory();}
-  if(e.key==="Escape")select(null);
-});
-document.getElementById("undoBtn").addEventListener("click",undo);
-document.getElementById("redoBtn").addEventListener("click",redo);
+/* ---------- Sélection + panneau ---------- */
+function selectSection(id){sel={kind:"section",secId:id,colIdx:null,blkId:null};applyHighlight();buildPanel();}
+function selectBlock(secId,colIdx,blkId){sel={kind:"block",secId,colIdx,blkId};applyHighlight();buildPanel();}
+function deselect(){sel={kind:null};applyHighlight();$("right").classList.remove("open");}
+$("rClose").addEventListener("click",deselect);
+
+function buildPanel(){
+  const right=$("right");
+  if(sel.kind==="section"){const s=findSec(sel.secId);if(!s){deselect();return;}right.classList.add("open");$("rTitle").textContent="Section";$("rBody").innerHTML=sectionPanel(s);wireSectionPanel(s);}
+  else if(sel.kind==="block"){const b=findBlk(sel.secId,sel.colIdx,sel.blkId);if(!b){deselect();return;}right.classList.add("open");$("rTitle").textContent="Bloc — "+blkLabel(b.type);$("rBody").innerHTML=blockPanel(b);wireBlockPanel(b);}
+  else right.classList.remove("open");
+}
+function blkLabel(t){const o=BLOCKTYPES.find(x=>x.t===t);return o?o.label:"Bloc";}
+
+/* --- Panneau section --- */
+function sectionPanel(s){
+  const isImg=(typeof s.bg==="object"&&s.bg&&s.bg.img);
+  const curColor=(typeof s.bg==="string")?s.bg:"";
+  let h="";
+  h+='<div class="grp"><label>Disposition (colonnes)</label><div class="layouts" id="secLay">'+LAYOUTS.map((l,i)=>'<div class="lay'+(sameSpans(s,l.spans)?" on":"")+'" data-i="'+i+'"><div class="bars">'+l.spans.map(sp=>'<i style="flex:'+sp+'"></i>').join("")+'</div></div>').join("")+'</div></div>';
+  h+='<div class="grp"><label>Fond — couleur</label><div class="swatches" id="secSw">'+SWATCHES.map(sw=>'<div class="sw'+(sw.k===""?" none":"")+((curColor===sw.k&&!isImg)?" on":"")+'" title="'+sw.label+'" data-c="'+sw.k+'"'+(sw.k?(' style="background:'+sw.k+'"'):"")+'></div>').join("")+'</div>'
+    +'<div class="row ln"><input type="color" id="secColor" value="'+(curColor||"#ffffff")+'"><input type="text" id="secColorHex" placeholder="#…" value="'+(curColor||"")+'"></div></div>';
+  h+='<div class="grp"><label>Fond — image</label><div class="row"><input type="text" id="secImg" placeholder="lien de l\'image…" value="'+(isImg?esc(s.bg.img):"")+'"><button class="mini" id="secImgPick">📁</button></div>'
+    +'<div class="ln" id="secOvWrap" style="'+(isImg?"":"display:none")+'"><label style="text-transform:none;font-size:.75rem">Assombrir l\'image</label><input type="range" id="secOv" min="0" max="0.8" step="0.05" value="'+(isImg&&s.bg.overlay!=null?s.bg.overlay:.45)+'" style="width:100%"></div>'
+    +(isImg?'<button class="mini ln" id="secImgClear">Retirer l\'image</button>':"")+'</div>';
+  h+='<div class="grp"><label>Espacement vertical</label><div class="seg" id="secPad">'+[["none","Aucun"],["sm","Petit"],["md","Moyen"],["lg","Grand"],["xl","Très grand"]].map(o=>'<button data-v="'+o[0]+'"'+((s.pad||"lg")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+  h+='<div class="grp"><label>Largeur du contenu</label><div class="seg" id="secW">'+[["narrow","Étroit"],["normal","Normal"],["wide","Large"],["full","Pleine"]].map(o=>'<button data-v="'+o[0]+'"'+((s.width||"normal")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+  h+='<div class="grp"><button class="del" id="secDel">🗑 Supprimer la section</button></div>';
+  return h;
+}
+function sameSpans(s,spans){const cur=(s.cols||[]).map(c=>c.span);return cur.length===spans.length&&cur.every((v,i)=>v===spans[i]);}
+function wireSectionPanel(s){
+  $("secLay").querySelectorAll(".lay").forEach(el=>el.addEventListener("click",()=>{commitChange();setLayout(s,LAYOUTS[+el.dataset.i].spans);markDirty();rebuild();selectSection(s.id);}));
+  $("secSw").querySelectorAll(".sw").forEach(el=>el.addEventListener("click",()=>{commitChange();s.bg=el.dataset.c;markDirty();rebuild();selectSection(s.id);}));
+  $("secColor").addEventListener("input",e=>{$("secColorHex").value=e.target.value;commitChange();s.bg=e.target.value;markDirty();rebuild();applyHighlight();});
+  $("secColorHex").addEventListener("input",e=>{if(/^#[0-9a-fA-F]{6}$/.test(e.target.value)){$("secColor").value=e.target.value;commitChange();s.bg=e.target.value;markDirty();rebuild();applyHighlight();}});
+  $("secImg").addEventListener("change",e=>{const v=e.target.value.trim();commitChange();if(v)s.bg={img:v,overlay:.45};else s.bg="";markDirty();rebuild();selectSection(s.id);});
+  $("secImgPick").addEventListener("click",()=>openImage({section:s}));
+  const ov=$("secOv");if(ov)ov.addEventListener("input",e=>{if(typeof s.bg==="object"){s.bg.overlay=parseFloat(e.target.value);markDirty();rebuild();applyHighlight();}});
+  const clr=$("secImgClear");if(clr)clr.addEventListener("click",()=>{commitChange();s.bg="";markDirty();rebuild();selectSection(s.id);});
+  $("secPad").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{commitChange();s.pad=b.dataset.v;markDirty();rebuild();selectSection(s.id);}));
+  $("secW").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{commitChange();s.width=b.dataset.v;markDirty();rebuild();selectSection(s.id);}));
+  $("secDel").addEventListener("click",()=>{commitChange();DATA[TARGET].sections=secs().filter(x=>x!==s);markDirty();deselect();rebuild();});
+}
+function setLayout(s,spans){
+  const old=s.cols||[];const cols=[];
+  for(let i=0;i<spans.length;i++)cols.push({span:spans[i],blocks:(old[i]&&old[i].blocks)?old[i].blocks:[]});
+  // si on réduit le nombre de colonnes, on rapatrie les blocs restants dans la dernière
+  if(old.length>spans.length){const extra=[];for(let i=spans.length;i<old.length;i++)(old[i].blocks||[]).forEach(b=>extra.push(b));cols[cols.length-1].blocks=cols[cols.length-1].blocks.concat(extra);}
+  s.cols=cols;
+}
+
+/* --- Panneau bloc --- */
+function blockPanel(b){
+  let h="";const t=b.type;
+  if(t==="heading"){
+    h+='<div class="grp"><label>Niveau de titre</label><div class="seg" id="bLevel">'+[["h2","Grand"],["h3","Moyen"],["h4","Petit"]].map(o=>'<button data-v="'+o[0]+'"'+((b.level||"h2")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+  }
+  if(t==="heading"||t==="text"){
+    h+='<div class="grp"><label>Alignement</label><div class="seg" id="bAlign">'+[["left","⬅"],["center","↔"],["right","➡"]].map(o=>'<button data-v="'+o[0]+'"'+((b.align||"left")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+    h+='<div class="grp"><label>Couleur du texte</label><div class="row"><input type="color" id="bColor" value="'+(b.color||"#3a2e27")+'"><button class="mini" id="bColorReset">Auto</button></div></div>';
+    h+='<div class="grp"><label>Contenu</label><div class="note" style="font-size:.78rem;color:var(--muted)">Cliquez le texte dans la page pour l\'écrire directement.</div></div>';
+  }
+  if(t==="image"){
+    h+='<div class="grp"><label>Image</label><div class="row"><input type="text" id="bSrc" placeholder="lien…" value="'+esc(b.src||"")+'"><button class="mini" id="bImgPick">📁</button></div></div>';
+    h+='<div class="grp"><label>Texte alternatif</label><input type="text" id="bAlt" value="'+esc(b.alt||"")+'"></div>';
+    h+='<div class="grp"><label>Lien au clic (option)</label><input type="text" id="bHref" placeholder="page.html ou https://…" value="'+esc(b.href||"")+'"></div>';
+    h+='<div class="grp"><label>Forme</label><div class="seg" id="bRatio">'+[["","Naturelle"],["1/1","Carré"],["4/5","Portrait"],["3/2","Paysage"]].map(o=>'<button data-v="'+o[0]+'"'+((b.ratio||"")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+  }
+  if(t==="button"){
+    h+='<div class="grp"><label>Texte du bouton</label><input type="text" id="bLabel" value="'+esc(b.label||"")+'"></div>';
+    h+='<div class="grp"><label>Lien</label><input type="text" id="bHref" placeholder="page.html ou https://…" value="'+esc(b.href||"")+'"></div>';
+    h+='<div class="grp"><label>Style</label><select id="bStyle">'+[["plein","Plein"],["light","Clair"],["ghost","Contour"]].map(o=>'<option value="'+o[0]+'"'+((b.style||"plein")===o[0]?" selected":"")+'>'+o[1]+'</option>').join("")+'</select></div>';
+    h+='<div class="grp"><label>Alignement</label><div class="seg" id="bAlign">'+[["left","⬅"],["center","↔"],["right","➡"]].map(o=>'<button data-v="'+o[0]+'"'+((b.align||"left")===o[0]?' class="on"':"")+'>'+o[1]+'</button>').join("")+'</div></div>';
+  }
+  if(t==="video")h+='<div class="grp"><label>Lien vidéo (YouTube / Vimeo)</label><input type="text" id="bUrl" placeholder="https://youtu.be/…" value="'+esc(b.url||"")+'"></div>';
+  if(t==="quote"){
+    h+='<div class="grp"><label>Citation</label><textarea id="bQuote">'+esc((b.html||"").replace(/<[^>]+>/g,""))+'</textarea></div>';
+    h+='<div class="grp"><label>Auteur (option)</label><input type="text" id="bAuthor" value="'+esc(b.author||"")+'"></div>';
+  }
+  if(t==="list"){
+    h+='<div class="grp"><label>Éléments de la liste</label><div id="bItems">'+ (b.items||[]).map((it,i)=>'<div class="row ln"><input type="text" data-i="'+i+'" data-f="icon" value="'+esc(it.icon||"")+'" style="flex:none;width:48px;text-align:center"><input type="text" data-i="'+i+'" data-f="text" value="'+esc((it.text||"").replace(/<[^>]+>/g,m=>m))+'"><button class="mini" data-rm="'+i+'">✕</button></div>').join("")+'</div><button class="mini ln" id="bAddItem">＋ Ajouter un élément</button></div>';
+  }
+  if(t==="map")h+='<div class="grp"><label>Lieu / adresse</label><input type="text" id="bQuery" value="'+esc(b.query||"")+'" placeholder="Ville, adresse…"></div>';
+  if(t==="spacer")h+='<div class="grp"><label>Hauteur (px)</label><input type="number" id="bH" min="8" max="400" value="'+(b.h||40)+'"></div>';
+  if(t==="gallery"){
+    h+='<div class="grp"><label>Colonnes</label><div class="seg" id="bGcols">'+[2,3,4].map(n=>'<button data-v="'+n+'"'+((b.cols||3)===n?' class="on"':"")+'>'+n+'</button>').join("")+'</div></div>';
+    h+='<div class="grp"><label>Images</label><div id="bGimgs" class="note" style="font-size:.78rem">'+((b.images||[]).length?(b.images.length+" image(s)"):"Aucune image")+'</div><button class="mini ln" id="bGadd">＋ Ajouter une image</button>'+((b.images||[]).length?'<button class="mini ln" id="bGclear">Tout enlever</button>':"")+'</div>';
+  }
+  if(t==="embed")h+='<div class="grp"><label>Code d\'intégration (HTML)</label><textarea id="bEmbed" style="min-height:120px;font-family:monospace;font-size:.78rem">'+esc(b.html||"")+'</textarea></div>';
+  h+='<div class="grp"><button class="del" id="bDel">🗑 Supprimer ce bloc</button></div>';
+  return h;
+}
+function wireBlockPanel(b){
+  const seg=(id,fn)=>{const s=$(id);if(!s)return;s.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{s.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===btn));commitChange();fn(btn.dataset.v);markDirty();refreshBlock(b);}));};
+  const live=(id,fn)=>{const e=$(id);if(!e)return;e.addEventListener("input",()=>{beginChange("blk:"+b.id);fn(e.value);markDirty();refreshBlock(b);});e.addEventListener("change",commitChange);};
+  seg("bLevel",v=>b.level=v);
+  seg("bAlign",v=>b.align=v);
+  seg("bRatio",v=>b.ratio=v);
+  seg("bGcols",v=>b.cols=+v);
+  live("bSrc",v=>b.src=v.trim());
+  live("bAlt",v=>b.alt=v);
+  live("bHref",v=>b.href=v.trim());
+  live("bLabel",v=>b.label=v);
+  live("bUrl",v=>b.url=v.trim());
+  live("bQuery",v=>b.query=v);
+  live("bH",v=>b.h=+v||40);
+  live("bEmbed",v=>b.html=v);
+  const bs=$("bStyle");if(bs)bs.addEventListener("change",()=>{commitChange();b.style=bs.value;markDirty();refreshBlock(b);});
+  const bc=$("bColor");if(bc)bc.addEventListener("input",()=>{beginChange("col:"+b.id);b.color=bc.value;markDirty();refreshBlock(b);});
+  const bcr=$("bColorReset");if(bcr)bcr.addEventListener("click",()=>{commitChange();delete b.color;markDirty();refreshBlock(b);buildPanel();});
+  const bq=$("bQuote");if(bq)bq.addEventListener("input",()=>{beginChange("q:"+b.id);b.html=esc(bq.value).replace(/\n/g,"<br>");markDirty();refreshBlock(b);});
+  const ba=$("bAuthor");if(ba)ba.addEventListener("input",()=>{beginChange("qa:"+b.id);b.author=ba.value;markDirty();refreshBlock(b);});
+  const ip=$("bImgPick");if(ip)ip.addEventListener("click",()=>openImage({block:b}));
+  // liste
+  const items=$("bItems");if(items){items.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{const i=+inp.dataset.i,f=inp.dataset.f;beginChange("li:"+b.id);b.items[i][f]=inp.value;markDirty();refreshBlock(b);}));items.querySelectorAll("[data-rm]").forEach(btn=>btn.addEventListener("click",()=>{commitChange();b.items.splice(+btn.dataset.rm,1);markDirty();refreshBlock(b);buildPanel();}));}
+  const ai=$("bAddItem");if(ai)ai.addEventListener("click",()=>{commitChange();(b.items=b.items||[]).push({icon:"✦",text:"Nouvel élément"});markDirty();refreshBlock(b);buildPanel();});
+  // galerie
+  const ga=$("bGadd");if(ga)ga.addEventListener("click",()=>openImage({gallery:b}));
+  const gc=$("bGclear");if(gc)gc.addEventListener("click",()=>{commitChange();b.images=[];markDirty();refreshBlock(b);buildPanel();});
+  const bd=$("bDel");if(bd)bd.addEventListener("click",()=>{blkAction(findSec(sel.secId),sel.colIdx,b,"del");});
+}
+function refreshBlock(b){const wrap=document.querySelector('[data-blk="'+b.id+'"]');if(!wrap)return;const inner=wrap.querySelector(".kx2-blk");inner.className="kx2-blk kx2-"+b.type;inner.innerHTML=blockHTML(b);
+  if(b.type==="heading"||b.type==="text"){const ed=b.type==="heading"?inner.querySelector(".kx2-h"):inner.querySelector(".kx2-rt");if(ed){ed.setAttribute("contenteditable","true");ed.addEventListener("input",()=>{beginChange("edit:"+b.id);b.html=ed.innerHTML;markDirty();});ed.addEventListener("blur",commitChange);}}
+}
+
+/* ---------- Actions section / bloc ---------- */
+function secAction(s,a){
+  const arr=secs(),i=arr.indexOf(s);
+  if(a==="up"&&i>0){commitChange();arr.splice(i,1);arr.splice(i-1,0,s);markDirty();rebuild();selectSection(s.id);}
+  else if(a==="down"&&i<arr.length-1){commitChange();arr.splice(i,1);arr.splice(i+1,0,s);markDirty();rebuild();selectSection(s.id);}
+  else if(a==="dup"){commitChange();const c=clone(s);reid(c);arr.splice(i+1,0,c);markDirty();rebuild();selectSection(c.id);}
+  else if(a==="del"){commitChange();DATA[TARGET].sections=arr.filter(x=>x!==s);markDirty();deselect();rebuild();}
+  else if(a==="cfg"){selectSection(s.id);}
+}
+function blkAction(s,ci,b,a){
+  const col=s.cols[ci];if(!col)return;const arr=col.blocks,i=arr.indexOf(b);
+  if(a==="up"&&i>0){commitChange();arr.splice(i,1);arr.splice(i-1,0,b);markDirty();rebuild();selectBlock(s.id,ci,b.id);}
+  else if(a==="down"&&i<arr.length-1){commitChange();arr.splice(i,1);arr.splice(i+1,0,b);markDirty();rebuild();selectBlock(s.id,ci,b.id);}
+  else if(a==="dup"){commitChange();const c=clone(b);c.id=uid();arr.splice(i+1,0,c);markDirty();rebuild();selectBlock(s.id,ci,c.id);}
+  else if(a==="del"){commitChange();col.blocks=arr.filter(x=>x!==b);markDirty();deselect();rebuild();}
+}
+function reid(s){s.id=uid();(s.cols||[]).forEach(c=>(c.blocks||[]).forEach(b=>b.id=uid()));}
+
+/* ---------- Ajout de sections / blocs ---------- */
+let blkTarget=null;
+function openBlockPicker(secId,colIdx){blkTarget={secId,colIdx};$("blkModal").classList.add("open");}
+function buildBlockGrid(){$("blkGrid").innerHTML=BLOCKTYPES.map(b=>'<div class="bpick" data-t="'+b.t+'"><span class="em">'+b.em+'</span>'+b.label+'</div>').join("");
+  $("blkGrid").querySelectorAll(".bpick").forEach(el=>el.addEventListener("click",()=>{addBlock(blkTarget.secId,blkTarget.colIdx,el.dataset.t);$("blkModal").classList.remove("open");}));}
+function addBlock(secId,colIdx,type){const s=findSec(secId);if(!s)return;const col=s.cols[colIdx];if(!col)return;commitChange();const b=blockDefault(type);b.id=uid();(col.blocks=col.blocks||[]).push(b);markDirty();rebuild();selectBlock(secId,colIdx,b.id);
+  if(type==="image")openImage({block:b});}
+
+function openSectionModal(){$("secModal").classList.add("open");}
+function buildSectionModal(){
+  $("secTmpl").innerHTML=TEMPLATES.map(t=>'<div class="pick" data-k="'+t.key+'"><span class="em">'+t.em+'</span><span>'+t.label+'<small>'+t.sub+'</small></span></div>').join("");
+  $("secTmpl").querySelectorAll(".pick").forEach(el=>el.addEventListener("click",()=>{const t=TEMPLATES.find(x=>x.key===el.dataset.k);commitChange();secs().push(t.make());markDirty();$("secModal").classList.remove("open");rebuild();const last=secs()[secs().length-1];selectSection(last.id);scrollToSec(last.id);}));
+  $("secBlank").innerHTML=LAYOUTS.map((l,i)=>'<div class="lay" data-i="'+i+'"><div class="bars">'+l.spans.map(sp=>'<i style="flex:'+sp+'"></i>').join("")+'</div><div style="font-size:.74rem;color:var(--muted);margin-top:6px">'+l.label+'</div></div>').join("");
+  $("secBlank").querySelectorAll(".lay").forEach(el=>el.addEventListener("click",()=>{const spans=LAYOUTS[+el.dataset.i].spans;commitChange();secs().push({id:uid(),bg:"",pad:"lg",width:"normal",cols:spans.map(sp=>({span:sp,blocks:[]}))});markDirty();$("secModal").classList.remove("open");rebuild();const last=secs()[secs().length-1];selectSection(last.id);scrollToSec(last.id);}));
+}
+function scrollToSec(id){const el=document.querySelector('[data-sec="'+id+'"]');if(el)el.scrollIntoView({behavior:"smooth",block:"center"});}
+
+/* ---------- Images (lien ou import) ---------- */
+function openImage(ctx){imgCtx=ctx;$("imgUrl").value="";$("imgModal").classList.add("open");}
+function applyImage(val){if(!imgCtx)return;commitChange();
+  if(imgCtx.gallery){(imgCtx.gallery.images=imgCtx.gallery.images||[]).push({src:val,alt:""});refreshBlock(imgCtx.gallery);buildPanel();}
+  else if(imgCtx.section){imgCtx.section.bg={img:val,overlay:(typeof imgCtx.section.bg==="object"&&imgCtx.section.bg.overlay!=null)?imgCtx.section.bg.overlay:.45};rebuild();selectSection(imgCtx.section.id);}
+  else if(imgCtx.block){imgCtx.block.src=val;refreshBlock(imgCtx.block);buildPanel();}
+  markDirty();$("imgModal").classList.remove("open");imgCtx=null;
+}
+function handleFile(f){if(!f||!f.type||f.type.indexOf("image")!==0){alert("Veuillez choisir un fichier image.");return;}const r=new FileReader();r.onload=()=>{const url=String(r.result);const name=Date.now()+"_"+(f.name||"photo").replace(/[^a-zA-Z0-9._-]/g,"_");pendingImages.push({name:name,mime:f.type,data:url.split(",")[1]});applyImage("/images/"+name);};r.readAsDataURL(f);}
+$("imgDrop").addEventListener("click",()=>$("imgFile").click());
+$("imgFile").addEventListener("change",()=>{if($("imgFile").files[0])handleFile($("imgFile").files[0]);$("imgFile").value="";});
+$("imgDrop").addEventListener("dragover",e=>{e.preventDefault();$("imgDrop").classList.add("over");});
+$("imgDrop").addEventListener("dragleave",()=>$("imgDrop").classList.remove("over"));
+$("imgDrop").addEventListener("drop",e=>{e.preventDefault();$("imgDrop").classList.remove("over");if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+$("imgOk").addEventListener("click",()=>{const u=$("imgUrl").value.trim();if(u)applyImage(u);else $("imgModal").classList.remove("open");});
+$("imgCancel").addEventListener("click",()=>{$("imgModal").classList.remove("open");imgCtx=null;});
+
+/* ---------- Historique (annuler / rétablir) ---------- */
+function snapshot(){return JSON.stringify(page());}
+function pushHist(){HIST=HIST.slice(0,HI+1);HIST.push(snapshot());HI=HIST.length-1;if(HIST.length>100){HIST.shift();HI--;}updHist();}
+function beginChange(key){if(key!==lastKey){pushHist();lastKey=key;}}
+function commitChange(){pushHist();lastKey=null;}
+function updHist(){$("undoBtn").disabled=HI<=0;$("redoBtn").disabled=HI>=HIST.length-1;}
+function restore(json){DATA[TARGET]=JSON.parse(json);deselect();rebuild();}
+function undo(){if(HI>0){HI--;restore(HIST[HI]);updHist();markDirtySilent();}}
+function redo(){if(HI<HIST.length-1){HI++;restore(HIST[HI]);updHist();markDirtySilent();}}
+$("undoBtn").addEventListener("click",undo);$("redoBtn").addEventListener("click",redo);
+
+/* ---------- État « modifié » + brouillon ---------- */
+function markDirty(){dirty=true;const b=$("pubBtn");b.disabled=false;b.classList.add("dirty");$("pubState").textContent="Brouillon";try{localStorage.setItem(DRAFT(),JSON.stringify({p:page(),imgs:pendingImages}));}catch(e){}}
+function markDirtySilent(){markDirty();}
+function cleanState(){dirty=false;const b=$("pubBtn");b.disabled=true;b.classList.remove("dirty");$("pubState").textContent="Publié";try{localStorage.removeItem(DRAFT());}catch(e){}}
+function toast(m,t,l){const e=$("toast");e.className="toast show "+(t||"");e.innerHTML="<span>"+m+"</span>"+(l||"");clearTimeout(e._t);e._t=setTimeout(()=>e.className="toast "+(t||""),7000);}
+
+/* ---------- Aperçu appareil ---------- */
+function setDevice(d){device=d;$("dDesk").classList.toggle("on",!d);$("dTab").classList.toggle("on",d==="tablet");$("dPhone").classList.toggle("on",d==="phone");rebuild();}
+$("dDesk").addEventListener("click",()=>setDevice(""));$("dTab").addEventListener("click",()=>setDevice("tablet"));$("dPhone").addEventListener("click",()=>setDevice("phone"));
+
+/* ---------- Chargement / changement de page ---------- */
 async function loadAll(){
-  try{const r=await fetch("/blocks.json?v="+Date.now());ALLBLOCKS=r.ok?await r.json():{};}catch(e){ALLBLOCKS={};}
-  if(!ALLBLOCKS||typeof ALLBLOCKS!=="object")ALLBLOCKS={};
-  loadZoneToCanvas();
+  try{const r=await fetch("/pages.json?v="+Date.now());DATA=r.ok?await r.json():{};}catch(e){DATA={};}
+  if(!DATA||typeof DATA!=="object")DATA={};
+  switchPage($("pageSel").value,true);
 }
-async function publish(){
-  const btn=document.getElementById("pubBtn"),st=document.getElementById("pubState");
-  btn.disabled=true;btn.textContent="Publication…";st.textContent="";
-  try{
-    const ser=serializeBlocks();const prev=currentZone();
-    if(!ser.blocks.length){ delete ALLBLOCKS[TARGET]; }
-    else { ALLBLOCKS[TARGET]={zones:[{id:(prev&&prev.id)||"z"+uid(),pos:999,h:ser.h,blocks:ser.blocks}]}; }
-    const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({blocks:ALLBLOCKS})});
-    const j=await r.json();
-    if(j.ok){st.textContent="✓ Publié sur « "+document.getElementById("pageSel").selectedOptions[0].text+" » — en ligne dans 1–2 min";st.style.color="#2e7d52";}
-    else{st.textContent="Erreur : "+(j.error||"inconnue");st.style.color="#c0392b";}
-  }catch(e){st.textContent="Erreur réseau";st.style.color="#c0392b";}
-  btn.disabled=false;btn.textContent="Publier";
+function switchPage(file,first){
+  TARGET=file;pendingImages=[];
+  // brouillon ?
+  let restored=false;
+  try{const d=JSON.parse(localStorage.getItem(DRAFT())||"null");if(d&&d.p&&JSON.stringify(d.p)!==JSON.stringify(DATA[TARGET]||{place:"bottom",sections:[]})){if(confirm("Un brouillon non publié existe pour cette page. Le restaurer ?")){DATA[TARGET]=d.p;pendingImages=d.imgs||[];restored=true;}else localStorage.removeItem(DRAFT());}}catch(e){}
+  page();
+  $("placeSel").value=page().place||"bottom";
+  HIST=[];HI=-1;lastKey=null;pushHist();
+  deselect();rebuild();
+  if(restored)markDirty();else cleanState();
 }
-document.getElementById("pageSel").addEventListener("change",e=>{
-  if(canvas.querySelector(".blk")&&!confirm("Changer de page ? Les blocs non publiés de la page en cours seront perdus.")){e.target.value=TARGET;return;}
-  TARGET=e.target.value;document.getElementById("pubState").textContent="";loadZoneToCanvas();
+$("pageSel").addEventListener("change",e=>{
+  if(dirty&&!confirm("Changer de page ? Vos modifications non publiées de cette page seront gardées en brouillon.")){e.target.value=TARGET;return;}
+  switchPage(e.target.value);
 });
-document.getElementById("pubBtn").addEventListener("click",publish);
-loadAll();
+$("placeSel").addEventListener("change",e=>{commitChange();page().place=e.target.value;markDirty();});
+
+/* ---------- Publication ---------- */
+async function publish(){
+  if(!dirty)return;const b=$("pubBtn");b.disabled=true;b.textContent="Publication…";$("pubState").textContent="Publication…";
+  try{
+    const body={pages:DATA};
+    if(pendingImages.length)body.images=pendingImages.map(i=>({name:i.name,data:i.data}));
+    const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    const j=await r.json();
+    if(j.ok){pendingImages=[];cleanState();b.textContent="Publier";toast("✓ Publié"+(j.backup?" — sauvegarde "+j.backup:"")+" ! En ligne dans 1–2 min.","ok",' <a href="/'+TARGET.replace(".html","")+'" target="_blank">Voir</a>');}
+    else{b.disabled=false;b.textContent="Publier";toast("Erreur : "+(j.error||"inconnue"),"err");}
+  }catch(e){b.disabled=false;b.textContent="Publier";toast("Erreur réseau : "+e.message,"err");}
+}
+$("pubBtn").addEventListener("click",publish);
+
+/* ---------- Divers ---------- */
+$("addSecBtn").addEventListener("click",openSectionModal);
+$("secCancel").addEventListener("click",()=>$("secModal").classList.remove("open"));
+$("blkCancel").addEventListener("click",()=>$("blkModal").classList.remove("open"));
+document.querySelectorAll("#secModal .tabs button").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll("#secModal .tabs button").forEach(x=>x.classList.toggle("on",x===btn));$("secTmpl").style.display=btn.dataset.t==="tmpl"?"":"none";$("secBlank").style.display=btn.dataset.t==="blank"?"":"none";}));
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)m.classList.remove("open");}));
+document.addEventListener("keydown",e=>{
+  const editing=e.target.isContentEditable||/^(input|textarea|select)$/i.test(e.target.tagName);
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="z"){e.preventDefault();if(e.shiftKey)redo();else undo();return;}
+  if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="s"){e.preventDefault();publish();return;}
+  if(e.key==="Escape"){if(document.querySelector(".modal.open"))document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open"));else deselect();}
+  if((e.key==="Delete"||e.key==="Backspace")&&!editing){if(sel.kind==="block"){const s=findSec(sel.secId);if(s)blkAction(s,sel.colIdx,findBlk(sel.secId,sel.colIdx,sel.blkId),"del");}}
+});
+$("page").addEventListener("click",e=>{if(e.target===$("page"))deselect();});
+window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue="";}});
+
+buildBlockGrid();buildSectionModal();loadAll();
 </script>
 </body>
 </html>
