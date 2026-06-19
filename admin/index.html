@@ -204,7 +204,8 @@ function assombrir(h,a){try{const c=h.replace("#","");const r=Math.max(0,Math.ro
 function ensureFont(doc,name){if(!name)return;const id="f-"+name.replace(/\W/g,"");if(doc.getElementById(id))return;const l=doc.createElement("link");l.id=id;l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family="+name.replace(/ /g,"+")+":wght@300;400;600;700&display=swap";doc.head.appendChild(l);}
 function applyTheme(doc){const rs=doc.documentElement.style;Object.keys(CSSVAR).forEach(k=>{if(THEME[k])rs.setProperty(CSSVAR[k],THEME[k]);});if(THEME.couleur_terracotta)rs.setProperty("--terracotta-fonce",assombrir(THEME.couleur_terracotta,.12));if(THEME.bouton_forme)rs.setProperty("--btn-radius",FORMES[THEME.bouton_forme]||"50px");const t=THEME.police_titres,x=THEME.police_textes;if(t){ensureFont(doc,t);rs.setProperty("--titre","'"+t+"', Georgia, serif");}if(x){ensureFont(doc,x);rs.setProperty("--corps","'"+x+"', -apple-system, sans-serif");}}
 function applyContent(doc){doc.querySelectorAll("[data-edit]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit")];if(typeof v==="string"&&v.length)el.innerHTML=v;});doc.querySelectorAll("[data-edit-bg]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-bg")];if(typeof v==="string"&&v.length)el.style.backgroundImage="url('"+v+"')";});doc.querySelectorAll("[data-edit-src]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-src")];if(typeof v==="string"&&v.length)el.setAttribute("src",v);});doc.querySelectorAll("[data-edit-href]").forEach(el=>{const v=CONTENT[el.getAttribute("data-edit-href")];if(typeof v==="string"&&v.length)el.setAttribute("href",v);});}
-function applyOvr(doc){const p=OVR[pageFile()];if(!p)return;Object.keys(p).forEach(s=>{let el;try{el=doc.querySelector(s);}catch(e){return;}if(!el)return;const o=p[s];if(typeof o.h==="string")el.innerHTML=o.h;if(o.src)el.setAttribute("src",o.src);if(o.bg)el.style.backgroundImage="url('"+o.bg+"')";if(o.s){Object.keys(o.s).forEach(k=>{if(o.s[k]&&o.s[k].indexOf&&o.s[k].indexOf("'")>-1)ensureFont(doc,o.s[k].replace(/'/g,"").split(",")[0]);el.style[k]=o.s[k];});}});}
+function pvw(v){if(typeof v==="string"&&v.indexOf("/images/")===0){const pi=pendingImages.find(i=>("/images/"+i.name)===v);if(pi)return"data:"+(pi.mime||"image/png")+";base64,"+pi.data;}return v;}
+function applyOvr(doc){const p=OVR[pageFile()];if(!p)return;Object.keys(p).forEach(s=>{let el;try{el=doc.querySelector(s);}catch(e){return;}if(!el)return;const o=p[s];if(typeof o.h==="string")el.innerHTML=o.h;if(o.src)el.setAttribute("src",pvw(o.src));if(o.bg)el.style.backgroundImage="url('"+pvw(o.bg)+"')";if(o.s){Object.keys(o.s).forEach(k=>{if(o.s[k]&&o.s[k].indexOf&&o.s[k].indexOf("'")>-1)ensureFont(doc,o.s[k].replace(/'/g,"").split(",")[0]);el.style[k]=o.s[k];});}});}
 
 function cleanHTML(el){
   const c=el.cloneNode(true);
@@ -247,10 +248,12 @@ function decorate(doc){
   doc.querySelectorAll("[data-edit-bg],[data-edit-src]").forEach(el=>el.classList.add("kx-media"));
   // un SEUL gestionnaire de clic (capture) : photos -> dialogue ; liens -> pas de navigation ; texte -> sélection précise
   doc.addEventListener("click",function(e){
-    const media=e.target.closest(".kx-media");
+    let media=e.target.closest(".kx-media");
+    const ed=e.target.closest(".kx-edit");
+    // bandeaux : l'image de fond est sous le texte/voile -> on la retrouve via le conteneur
+    if(!media && !ed){ const host=e.target.closest(".hero,.page-hero"); if(host){ const bg=host.querySelector("[data-edit-bg]"); if(bg) media=bg; } }
     if(media){ e.preventDefault(); e.stopPropagation(); openImg(media, media.hasAttribute("data-edit-bg")?"bg":"src", doc); return; }
     const link=e.target.closest("a,button"); if(link) e.preventDefault();
-    const ed=e.target.closest(".kx-edit");
     if(ed){ e.stopPropagation(); selectEl(ed,doc); }
   },true);
   // édition du texte (délégation)
@@ -307,8 +310,8 @@ document.addEventListener("click",()=>$("menu").classList.remove("open"));$("men
 $("resetBtn").addEventListener("click",()=>{if(confirm("Annuler toutes les modifications non publiées ?")){localStorage.removeItem(DRAFT);pendingImages=[];history=[];closeInsp();boot().then(clean);}});
 
 function openImg(el,kind,doc){imgTarget={el,kind,doc,key:cssPath(el)};const cur=kind==="bg"?(el.style.backgroundImage||"").replace(/^url\(['"]?/,"").replace(/['"]?\)$/,""):el.getAttribute("src");$("imgUrl").value=(cur&&cur.indexOf("data:")!==0)?cur:"";$("imgModal").classList.add("open");}
-function applyImg(val){pushHist();const o=ovPage(),k=imgTarget.key;o[k]=o[k]||{};if(imgTarget.kind==="bg"){imgTarget.el.style.backgroundImage="url('"+val+"')";o[k].bg=val;}else{imgTarget.el.setAttribute("src",val);o[k].src=val;}markDirty();$("imgModal").classList.remove("open");}
-function handleFile(f){const r=new FileReader();r.onload=()=>{const b64=String(r.result).split(",")[1];const safe=Date.now()+"_"+f.name.replace(/[^a-zA-Z0-9._-]/g,"_");pendingImages.push({name:safe,data:b64});applyImg("/images/"+safe);};r.readAsDataURL(f);}
+function applyImg(storeVal,previewVal){previewVal=previewVal||storeVal;pushHist();const o=ovPage(),k=imgTarget.key;o[k]=o[k]||{};if(imgTarget.kind==="bg"){imgTarget.el.style.backgroundImage="url('"+previewVal+"')";o[k].bg=storeVal;}else{imgTarget.el.setAttribute("src",previewVal);o[k].src=storeVal;}markDirty();$("imgModal").classList.remove("open");}
+function handleFile(f){if(!f.type||f.type.indexOf("image")!==0){alert("Veuillez choisir un fichier image (JPG, PNG, WEBP…).");return;}const r=new FileReader();r.onload=()=>{const dataUrl=String(r.result);const safe=Date.now()+"_"+f.name.replace(/[^a-zA-Z0-9._-]/g,"_");pendingImages.push({name:safe,data:dataUrl.split(",")[1],mime:f.type});applyImg("/images/"+safe,dataUrl);};r.onerror=()=>alert("Impossible de lire ce fichier.");r.readAsDataURL(f);}
 $("drop").addEventListener("click",()=>$("imgFile").click());
 $("imgFile").addEventListener("change",()=>{if($("imgFile").files[0])handleFile($("imgFile").files[0]);});
 $("drop").addEventListener("dragover",e=>{e.preventDefault();$("drop").classList.add("over");});$("drop").addEventListener("dragleave",()=>$("drop").classList.remove("over"));$("drop").addEventListener("drop",e=>{e.preventDefault();$("drop").classList.remove("over");if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
