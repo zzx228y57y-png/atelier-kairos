@@ -84,7 +84,7 @@ function makeBlock(type,left,top){
   const el=document.createElement("div");
   el.className="blk "+type;
   // dimensions par défaut (en cellules)
-  let cw=4, rh=type==="titre"?2:type==="bouton"?1:3;
+  let cw=4, rh=type==="titre"?2:type==="bouton"?2:3;
   if(type==="image"){cw=4;rh=5;}
   el.style.width=(cw*w)+"px";
   el.style.height=(rh*ROW)+"px";
