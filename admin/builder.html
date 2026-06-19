@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bac à sable — Atelier Kairos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  :root{--ui:'Lato',-apple-system,sans-serif;--accent:#C97A61;--ink:#3a2e27;--muted:#9a8a7e;--line:#e7ddd4;--soft:#f7f2ec}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--ui);color:var(--ink);background:#efe9e3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .top{height:54px;flex:none;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 18px}
+  .top .logo{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600}
+  .beta{font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:#d23b2f;padding:2px 6px;border-radius:6px}
+  .top .hint{color:var(--muted);font-size:.82rem}
+  .top .sp{flex:1}
+  .top button{background:none;border:1px solid var(--line);border-radius:9px;height:36px;padding:0 14px;cursor:pointer;font:inherit;font-size:.85rem;color:var(--ink)}
+  .top button:hover{background:var(--soft)}
+  .main{flex:1;display:flex;min-height:0}
+  .palette{width:220px;flex:none;background:#fff;border-right:1px solid var(--line);padding:16px;overflow:auto}
+  .palette h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+  .chip{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px;cursor:grab;background:var(--soft);user-select:none;font-size:.9rem;font-weight:600}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  .chip .ic{font-size:1.15rem}
+  .palette .note{margin-top:16px;font-size:.76rem;color:var(--muted);line-height:1.5}
+  .stage{flex:1;overflow:auto;padding:30px}
+  .canvas{position:relative;max-width:1100px;margin:0 auto;background:#fff;min-height:760px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.07);background-image:linear-gradient(rgba(201,122,97,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(201,122,97,.07) 1px,transparent 1px);background-size:100% 44px,8.3333% 100%}
+  .blk{position:absolute;border-radius:10px;overflow:hidden;outline:1px solid transparent}
+  .blk:hover{outline:2px solid var(--accent)}
+  .blk.sel{outline:2px solid var(--accent)}
+  .blk .inner{width:100%;height:100%;padding:8px 12px;overflow:hidden}
+  .blk .inner h2{margin:0;font-family:'Cormorant Garamond',serif}
+  .blk .inner p{margin:0}
+  .blk.image .inner{padding:0;display:flex;align-items:center;justify-content:center;background:#ece4dc;color:#b9a796;font-size:1.6rem}
+  .blk.image img{width:100%;height:100%;object-fit:cover;display:block}
+  .blk.button .inner{display:flex;align-items:center;justify-content:center;background:none}
+  .blk .bar{position:absolute;top:-13px;right:0;display:none;gap:4px;background:#6B4F43;border-radius:7px;padding:3px;z-index:6}
+  .blk:hover .bar,.blk.sel .bar{display:flex}
+  .blk .bar button{background:rgba(255,255,255,.18);border:none;color:#fff;width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;padding:0}
+  .blk .bar button:hover{background:rgba(255,255,255,.4)}
+  .blk .move{position:absolute;inset:0;cursor:grab}
+  .blk.dragging .move,.blk.sizing{cursor:grabbing}
+  .blk .rs{position:absolute;right:-4px;bottom:-4px;width:16px;height:16px;background:var(--accent);border:2px solid #fff;border-radius:4px;cursor:nwse-resize;z-index:7}
+  .blk [contenteditable]{outline:none;cursor:text;position:relative;z-index:5}
+  .ghost{position:fixed;pointer-events:none;z-index:99;background:var(--accent);color:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:.85rem;opacity:.9;transform:translate(-50%,-50%)}
+  .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c3b3a6;font-size:1rem;pointer-events:none;text-align:center;padding:30px}
+</style>
+</head>
+<body>
+  <div class="top">
+    <span class="logo">Atelier Kairos</span><span class="beta">beta</span>
+    <span class="hint">Bac à sable — testez librement, <b>rien n'est publié</b>.</span>
+    <span class="sp"></span>
+    <button id="clearBtn">Tout effacer</button>
+  </div>
+  <div class="main">
+    <aside class="palette">
+      <h2>Blocs</h2>
+      <div class="chip" draggable="false" data-t="titre"><span class="ic">𝐓</span> Titre</div>
+      <div class="chip" draggable="false" data-t="texte"><span class="ic">¶</span> Texte</div>
+      <div class="chip" draggable="false" data-t="image"><span class="ic">🖼</span> Image</div>
+      <div class="chip" draggable="false" data-t="bouton"><span class="ic">⬭</span> Bouton</div>
+      <div class="note">Glissez un bloc sur la page →<br><br>• Déplacez-le en le tirant.<br>• Redimensionnez via le carré en bas à droite.<br>• Tout s'aligne sur la grille (magnétique).</div>
+    </aside>
+    <div class="stage">
+      <div class="canvas" id="canvas">
+        <div class="empty" id="empty">Glissez un bloc depuis la gauche pour commencer ✦</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const COLS=12, ROW=44;
+const canvas=document.getElementById("canvas");
+function cellW(){return canvas.clientWidth/COLS;}
+function snap(v,step){return Math.round(v/step)*step;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function refreshEmpty(){document.getElementById("empty").style.display=canvas.querySelector(".blk")?"none":"flex";}
+
+function makeBlock(type,left,top){
+  const w=cellW();
+  const el=document.createElement("div");
+  el.className="blk "+type;
+  // dimensions par défaut (en cellules)
+  let cw=4, rh=type==="titre"?2:type==="bouton"?1:3;
+  if(type==="image"){cw=4;rh=5;}
+  el.style.width=(cw*w)+"px";
+  el.style.height=(rh*ROW)+"px";
+  el.style.left=clamp(snap(left,w),0,(COLS-cw)*w)+"px";
+  el.style.top=Math.max(0,snap(top,ROW))+"px";
+  let inner='';
+  if(type==="titre")inner='<h2 contenteditable="true">Votre titre</h2>';
+  else if(type==="texte")inner='<p contenteditable="true">Votre texte ici. Cliquez pour le modifier.</p>';
+  else if(type==="image")inner='🖼';
+  else if(type==="bouton")inner='<a class="btn" contenteditable="true">Bouton</a>';
+  el.innerHTML='<div class="move"></div><div class="inner">'+inner+'</div>'+
+    '<div class="bar"><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button></div>'+
+    '<div class="rs" title="Redimensionner"></div>';
+  canvas.appendChild(el);
+  wireBlock(el);
+  refreshEmpty();
+  return el;
+}
+
+function wireBlock(el){
+  el.addEventListener("mousedown",()=>select(el));
+  el.querySelector(".bar").addEventListener("click",e=>{
+    const b=e.target.closest("button"); if(!b)return; e.stopPropagation();
+    if(b.dataset.a==="del"){el.remove();refreshEmpty();}
+    else if(b.dataset.a==="dup"){const c=makeBlock([...el.classList].find(x=>x!=="blk"&&x!=="sel"),parseFloat(el.style.left)+20,parseFloat(el.style.top)+20);c.querySelector(".inner").innerHTML=el.querySelector(".inner").innerHTML;c.style.width=el.style.width;c.style.height=el.style.height;}
+  });
+  // déplacement
+  const move=el.querySelector(".move");
+  move.addEventListener("pointerdown",e=>{
+    e.preventDefault();select(el);el.classList.add("dragging");
+    const r=el.getBoundingClientRect(),cr=canvas.getBoundingClientRect();
+    const ox=e.clientX-r.left, oy=e.clientY-r.top;
+    function mv(ev){let l=ev.clientX-cr.left-ox, t=ev.clientY-cr.top-oy;el.style.left=clamp(l,0,canvas.clientWidth-el.offsetWidth)+"px";el.style.top=Math.max(0,t)+"px";}
+    function up(){const w=cellW();el.style.left=clamp(snap(parseFloat(el.style.left),w),0,canvas.clientWidth-el.offsetWidth)+"px";el.style.top=Math.max(0,snap(parseFloat(el.style.top),ROW))+"px";el.classList.remove("dragging");document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);}
+    document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
+  });
+  // redimensionnement
+  el.querySelector(".rs").addEventListener("pointerdown",e=>{
+    e.preventDefault();e.stopPropagation();select(el);el.classList.add("sizing");
+    const cr=canvas.getBoundingClientRect(),sl=parseFloat(el.style.left),st=parseFloat(el.style.top);
+    function mv(ev){el.style.width=Math.max(cellW(),ev.clientX-cr.left-sl)+"px";el.style.height=Math.max(ROW,ev.clientY-cr.top-st)+"px";}
+    function up(){const w=cellW();el.style.width=clamp(snap(el.offsetWidth,w),w,(COLS- Math.round(sl/w))*w)+"px";el.style.height=Math.max(ROW,snap(el.offsetHeight,ROW))+"px";el.classList.remove("sizing");document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);}
+    document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
+  });
+}
+
+let selEl=null;
+function select(el){if(selEl)selEl.classList.remove("sel");selEl=el;if(el)el.classList.add("sel");}
+canvas.addEventListener("pointerdown",e=>{if(e.target===canvas||e.target.id==="empty")select(null);});
+
+// glisser depuis la palette
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    const type=chip.dataset.t;
+    const ghost=document.createElement("div");ghost.className="ghost";ghost.textContent=chip.textContent.trim();document.body.appendChild(ghost);
+    function mv(ev){ghost.style.left=ev.clientX+"px";ghost.style.top=ev.clientY+"px";}
+    function up(ev){
+      ghost.remove();document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);
+      const cr=canvas.getBoundingClientRect();
+      if(ev.clientX>=cr.left&&ev.clientX<=cr.right&&ev.clientY>=cr.top&&ev.clientY<=cr.bottom){
+        select(makeBlock(type,ev.clientX-cr.left-cellW()*2,ev.clientY-cr.top-ROW));
+      }
+    }
+    mv(e);document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
+  });
+});
+
+document.getElementById("clearBtn").addEventListener("click",()=>{if(confirm("Tout effacer ?")){canvas.querySelectorAll(".blk").forEach(b=>b.remove());refreshEmpty();}});
+window.addEventListener("resize",refreshEmpty);
+</script>
+</body>
+</html>

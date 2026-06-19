@@ -16,6 +16,7 @@
   .top{height:56px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 16px;flex-shrink:0;z-index:40}
   .logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600}
   .logo small{display:block;font-family:var(--ui);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:-3px}
+  .logo .beta{font-family:var(--ui);font-size:.6rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:#d23b2f;padding:2px 6px;border-radius:6px;vertical-align:middle;position:relative;top:-2px}
   .grow{flex:1}
   .devices{display:flex;gap:2px;background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:3px}
   .devices button{background:none;border:none;width:34px;height:30px;border-radius:6px;cursor:pointer;color:var(--muted)}
@@ -97,7 +98,7 @@
 </head>
 <body>
   <div class="top">
-    <div class="logo">Atelier Kairos<small>Éditeur</small></div>
+    <div class="logo">Atelier Kairos <span class="beta">beta</span><small>Éditeur</small></div>
     <div class="grow"></div>
     <div class="devices"><button id="dDesk" class="on" title="Ordinateur">🖥</button><button id="dTab" title="Tablette">▭</button><button id="dPhone" title="Mobile">📱</button></div>
     <button class="icbtn" id="undoBtn" title="Annuler (Cmd+Z)" disabled>↺</button>
