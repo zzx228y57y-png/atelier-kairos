@@ -37,6 +37,10 @@
       root.setProperty("--terracotta-fonce", assombrir(theme.couleur_terracotta, 0.12));
     }
 
+    // Forme des boutons
+    var formes = { pilule: "50px", arrondi: "12px", carre: "4px" };
+    if (theme.bouton_forme) root.setProperty("--btn-radius", formes[theme.bouton_forme] || "50px");
+
     // Polices
     const titres = theme.police_titres;
     const textes = theme.police_textes;

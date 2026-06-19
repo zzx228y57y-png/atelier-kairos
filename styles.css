@@ -83,7 +83,7 @@ p{margin-bottom:1.1rem;}
   background:var(--terracotta);
   color:#fff;
   padding:15px 34px;
-  border-radius:50px;
+  border-radius:var(--btn-radius,50px);
   font-weight:700;
   font-size:.95rem;
   letter-spacing:.02em;
