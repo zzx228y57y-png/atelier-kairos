@@ -155,6 +155,24 @@ export async function onRequestPost(context) {
       results.push("blocks.json");
     }
 
+    if (payload.pages && typeof payload.pages === "object") {
+      const pg = toBase64Utf8(JSON.stringify(payload.pages, null, 2) + "\n");
+      await ghPut(owner, repo, branch, "pages.json", pg, "Mise à jour des sections via l'éditeur", token, email);
+      results.push("pages.json");
+    }
+
+    if (payload.collections && typeof payload.collections === "object") {
+      const cl = toBase64Utf8(JSON.stringify(payload.collections, null, 2) + "\n");
+      await ghPut(owner, repo, branch, "collections.json", cl, "Mise à jour du blog via l'éditeur", token, email);
+      results.push("collections.json");
+    }
+
+    if (payload.products && typeof payload.products === "object") {
+      const pr = toBase64Utf8(JSON.stringify(payload.products, null, 2) + "\n");
+      await ghPut(owner, repo, branch, "products.json", pr, "Mise à jour de la boutique via l'éditeur", token, email);
+      results.push("products.json");
+    }
+
     if (Array.isArray(payload.images)) {
       for (const img of payload.images) {
         if (!img || !img.name || !img.data) continue;
