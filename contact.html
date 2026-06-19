@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact &amp; Tarifs — Atelier Kairos</title>
+<meta name="description" content="Tarifs, coordonnées, formulaire de contact et prise de rendez-vous.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="brand">
+      <span class="brand__name">Atelier Kairos</span>
+      <span class="brand__tag">Psychopraticienne · Sophrologue</span>
+    </a>
+    <button class="nav__toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <ul class="nav__links">
+      <li><a href="index.html">Accueil</a></li>
+      <li><a href="accompagnements.html">Accompagnements</a></li>
+      <li><a href="seances.html">Les séances</a></li>
+      <li><a href="temoignages.html">Témoignages</a></li>
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="contact.html" class="btn">Prendre rendez-vous</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero__bg" style="background-image:url('https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1900&q=80')"></div>
+  <div class="page-hero__overlay"></div>
+  <div class="page-hero__inner">
+    <span class="eyebrow" style="color:#f4d9d0;">Contact &amp; Tarifs</span>
+    <h1>Faisons le premier pas ensemble</h1>
+    <p>Chaque démarche commence par un premier pas. Je serai heureuse de vous accueillir et d'échanger avec vous.</p>
+  </div>
+</section>
+
+<!-- TARIFS -->
+<section class="section">
+  <div class="container">
+    <div class="text-center reveal" style="margin-bottom:46px;">
+      <span class="eyebrow">Tarifs</span>
+      <h2>Des tarifs clairs et transparents</h2>
+    </div>
+    <div class="pricing">
+      <div class="price-card reveal">
+        <h3>Séance individuelle</h3>
+        <div class="price">XX €<small> / séance</small></div>
+        <p>Séance de 1h à 1h15, en présentiel ou en visioconférence. <em>(Tarif à compléter)</em></p>
+      </div>
+      <div class="price-card reveal">
+        <h3>Atelier de groupe</h3>
+        <div class="price">XX €<small> / personne</small></div>
+        <p>Ateliers thématiques en petit groupe. Dates et tarifs communiqués sur demande. <em>(À compléter)</em></p>
+      </div>
+    </div>
+    <p class="text-center form-note" style="margin-top:22px;">Les tarifs définitifs seront renseignés ici. Possibilité de paiement par espèces, chèque ou virement.</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section section--alt">
+  <div class="container contact-grid">
+    <div class="reveal">
+      <span class="eyebrow">Me contacter</span>
+      <h2>Écrivez-moi quelques mots</h2>
+      <p>Vous pouvez me joindre par le formulaire ci-contre, par téléphone ou par email. Je vous réponds avec attention dans les meilleurs délais.</p>
+      <ul class="contact-info">
+        <li><span class="ico">✉️</span><span>Email<br><a href="mailto:contact@atelier-kairos.com">contact@atelier-kairos.com</a></span></li>
+        <li><span class="ico">📞</span><span>Téléphone<br><a href="tel:+33000000000">XX XX XX XX XX</a> <em>(à compléter)</em></span></li>
+        <li><span class="ico">📍</span><span>Cabinet<br>Adresse à compléter</span></li>
+        <li><span class="ico">💻</span><span>Format<br>Présentiel &amp; visioconférence</span></li>
+        <li><span class="ico">📷</span><span>Instagram<br><a href="#">@atelier.kairos <em>(lien à compléter)</em></a></span></li>
+      </ul>
+    </div>
+
+    <div class="reveal">
+      <!-- IMPORTANT : pour recevoir les messages par email, remplacez l'action ci-dessous
+           par votre lien Formspree (gratuit) : https://formspree.io
+           Exemple : action="https://formspree.io/f/votreID" method="POST"
+           et retirez l'attribut data-demo. -->
+      <form id="contact-form" data-demo="true" action="#" method="POST" style="background:#fff;padding:32px;border-radius:var(--rayon);box-shadow:var(--ombre-douce);">
+        <div class="field">
+          <label for="nom">Votre nom</label>
+          <input type="text" id="nom" name="nom" required placeholder="Prénom et nom">
+        </div>
+        <div class="field">
+          <label for="email">Votre email</label>
+          <input type="email" id="email" name="email" required placeholder="vous@exemple.com">
+        </div>
+        <div class="field">
+          <label for="tel">Votre téléphone (facultatif)</label>
+          <input type="tel" id="tel" name="telephone" placeholder="Pour être rappelé(e)">
+        </div>
+        <div class="field">
+          <label for="message">Votre message</label>
+          <textarea id="message" name="message" required placeholder="Dites-moi en quelques mots ce qui vous amène…"></textarea>
+        </div>
+        <button type="submit" class="btn" style="width:100%;">Envoyer mon message</button>
+        <p class="form-note" id="form-status">Vos informations restent strictement confidentielles.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CARTE -->
+<section class="section">
+  <div class="container">
+    <div class="text-center reveal" style="margin-bottom:30px;">
+      <span class="eyebrow">Où me trouver</span>
+      <h2>Le cabinet</h2>
+      <p class="lead mx-auto">L'adresse exacte et la carte seront ajoutées ici. <em>(Placeholder Google Maps ci-dessous.)</em></p>
+    </div>
+    <div class="map-embed reveal">
+      <iframe
+        title="Localisation du cabinet"
+        src="https://www.google.com/maps?q=France&output=embed"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="brand__name">Atelier Kairos</span>
+        <p>Un accompagnement humain, doux et sécurisant pour comprendre, apaiser et avancer à votre rythme.</p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="accompagnements.html">Mes accompagnements</a></li>
+          <li><a href="seances.html">Déroulement des séances</a></li>
+          <li><a href="temoignages.html">Témoignages</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="footer-links">
+          <li><a href="contact.html">Prendre rendez-vous</a></li>
+          <li><a href="mailto:contact@atelier-kairos.com">contact@atelier-kairos.com</a></li>
+          <li><a href="#" aria-label="Instagram">Instagram</a></li>
+          <li>Présentiel &amp; visioconférence</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="year"></span> Atelier Kairos · Psychopraticienne &amp; Sophrologue · <a href="seances.html#mention-legale">Mentions légales</a>
+    </div>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<script src="script.js"></script>
+</body>
+</html>
