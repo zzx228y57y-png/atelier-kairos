@@ -46,6 +46,23 @@
   .blk [contenteditable]{outline:none;cursor:text;position:relative;z-index:5}
   .ghost{position:fixed;pointer-events:none;z-index:99;background:var(--accent);color:#fff;border-radius:9px;padding:8px 14px;font-weight:600;font-size:.85rem;opacity:.9;transform:translate(-50%,-50%)}
   .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c3b3a6;font-size:1rem;pointer-events:none;text-align:center;padding:30px}
+  .blk.separateur .inner{display:flex;align-items:center;padding:0 6px}
+  .blk.separateur .sepline{width:100%;height:2px;background:#d9c8ba;border-radius:2px}
+  .blk.espace .inner{border:1px dashed #e7ddd4;border-radius:8px}
+  .insp{width:256px;flex:none;background:#fff;border-left:1px solid var(--line);padding:16px;overflow:auto;display:none}
+  .insp.open{display:block}
+  .insp h2{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .insp label{display:block;font-size:.74rem;font-weight:700;margin:13px 0 5px;color:var(--ink)}
+  .insp input[type=text],.insp select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:.85rem;background:#fff}
+  .insp .seg{display:flex;gap:4px}
+  .insp .seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:7px;height:32px;cursor:pointer;font-size:.85rem;color:var(--ink)}
+  .insp .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .insp .row2{display:flex;gap:8px;align-items:center}
+  .insp input[type=color]{width:42px;height:32px;border:1px solid var(--line);border-radius:7px;padding:0;background:none;cursor:pointer;flex:none}
+  .insp .mini{background:none;border:1px solid var(--line);border-radius:7px;height:32px;padding:0 10px;cursor:pointer;font-size:.78rem;color:var(--ink)}
+  .insp .mini:hover{background:var(--soft)}
+  .insp .del{width:100%;margin-top:16px;background:#fbe9e6;color:#c0392b;border:none;border-radius:8px;height:38px;cursor:pointer;font-weight:600;font-size:.85rem}
+  .insp .del:hover{background:#f7ddd8}
 </style>
 </head>
 <body>
@@ -62,13 +79,19 @@
       <div class="chip" draggable="false" data-t="texte"><span class="ic">¶</span> Texte</div>
       <div class="chip" draggable="false" data-t="image"><span class="ic">🖼</span> Image</div>
       <div class="chip" draggable="false" data-t="bouton"><span class="ic">⬭</span> Bouton</div>
-      <div class="note">Glissez un bloc sur la page →<br><br>• Déplacez-le en le tirant.<br>• Redimensionnez via le carré en bas à droite.<br>• Tout s'aligne sur la grille (magnétique).</div>
+      <div class="chip" draggable="false" data-t="separateur"><span class="ic">―</span> Séparateur</div>
+      <div class="chip" draggable="false" data-t="espace"><span class="ic">⬚</span> Espace</div>
+      <div class="note">Glissez un bloc sur la page →<br><br>• Déplacez-le en le tirant.<br>• Redimensionnez via le carré en bas à droite.<br>• Cliquez un bloc pour ouvrir ses réglages →</div>
     </aside>
     <div class="stage">
       <div class="canvas" id="canvas">
         <div class="empty" id="empty">Glissez un bloc depuis la gauche pour commencer ✦</div>
       </div>
     </div>
+    <aside class="insp" id="insp">
+      <h2 id="ihead">Bloc</h2>
+      <div id="inspBody"></div>
+    </aside>
   </div>
 
 <script>
@@ -86,6 +109,8 @@ function makeBlock(type,left,top){
   // dimensions par défaut (en cellules)
   let cw=4, rh=type==="titre"?2:type==="bouton"?2:3;
   if(type==="image"){cw=4;rh=5;}
+  if(type==="separateur"){cw=8;rh=1;}
+  if(type==="espace"){cw=12;rh=2;}
   el.style.width=(cw*w)+"px";
   el.style.height=(rh*ROW)+"px";
   el.style.left=clamp(snap(left,w),0,(COLS-cw)*w)+"px";
@@ -95,6 +120,8 @@ function makeBlock(type,left,top){
   else if(type==="texte")inner='<p contenteditable="true">Votre texte ici. Cliquez pour le modifier.</p>';
   else if(type==="image")inner='🖼';
   else if(type==="bouton")inner='<a class="btn" contenteditable="true">Bouton</a>';
+  else if(type==="separateur")inner='<div class="sepline"></div>';
+  else if(type==="espace")inner='';
   el.innerHTML='<div class="move"></div><div class="inner">'+inner+'</div>'+
     '<div class="bar"><button data-a="dup" title="Dupliquer">⧉</button><button data-a="del" title="Supprimer">🗑</button></div>'+
     '<div class="rs" title="Redimensionner"></div>';
@@ -108,8 +135,8 @@ function wireBlock(el){
   el.addEventListener("mousedown",()=>select(el));
   el.querySelector(".bar").addEventListener("click",e=>{
     const b=e.target.closest("button"); if(!b)return; e.stopPropagation();
-    if(b.dataset.a==="del"){el.remove();refreshEmpty();}
-    else if(b.dataset.a==="dup"){const c=makeBlock([...el.classList].find(x=>x!=="blk"&&x!=="sel"),parseFloat(el.style.left)+20,parseFloat(el.style.top)+20);c.querySelector(".inner").innerHTML=el.querySelector(".inner").innerHTML;c.style.width=el.style.width;c.style.height=el.style.height;}
+    if(b.dataset.a==="del"){el.remove();select(null);refreshEmpty();}
+    else if(b.dataset.a==="dup"){dupBlock(el);}
   });
   // déplacement
   const move=el.querySelector(".move");
@@ -131,9 +158,80 @@ function wireBlock(el){
   });
 }
 
-let selEl=null;
-function select(el){if(selEl)selEl.classList.remove("sel");selEl=el;if(el)el.classList.add("sel");}
+let selEl=null, ZTOP=10;
+function select(el){if(selEl)selEl.classList.remove("sel");selEl=el;if(el)el.classList.add("sel");buildInsp(el);}
 canvas.addEventListener("pointerdown",e=>{if(e.target===canvas||e.target.id==="empty")select(null);});
+
+/* ===== Panneau de réglages ===== */
+const SIZES=[["Petit","16px"],["Normal","20px"],["Moyen","26px"],["Grand","34px"],["Très grand","46px"]];
+function blockType(el){return ["titre","texte","image","bouton","separateur","espace"].find(c=>el.classList.contains(c));}
+function labelOf(t){return {titre:"Titre",texte:"Texte",image:"Image",bouton:"Bouton",separateur:"Séparateur",espace:"Espace"}[t]||"Bloc";}
+function getC(el){const t=blockType(el);if(t==="titre")return el.querySelector("h2");if(t==="texte")return el.querySelector("p");if(t==="bouton")return el.querySelector("a.btn");return el.querySelector(".inner");}
+function toHex(c){if(!c)return"";if(c[0]==="#")return c;const m=(""+c).match(/\d+/g);if(!m)return"";return"#"+m.slice(0,3).map(x=>(+x).toString(16).padStart(2,"0")).join("");}
+function esc(s){return (s||"").replace(/"/g,"&quot;");}
+function setImg(el,url){const inner=el.querySelector(".inner");if(!url){inner.innerHTML="🖼";return;}let img=el.querySelector("img");if(!img){inner.innerHTML="";img=document.createElement("img");img.style.objectFit="cover";inner.appendChild(img);}img.src=url;}
+function dupBlock(el){const c=makeBlock(blockType(el),parseFloat(el.style.left)+20,parseFloat(el.style.top)+20);c.querySelector(".inner").innerHTML=el.querySelector(".inner").innerHTML;c.style.width=el.style.width;c.style.height=el.style.height;if(el.style.backgroundColor)c.style.backgroundColor=el.style.backgroundColor;select(c);}
+
+function buildInsp(el){
+  const insp=document.getElementById("insp"), body=document.getElementById("inspBody");
+  if(!el){insp.classList.remove("open");return;}
+  insp.classList.add("open");
+  const type=blockType(el);
+  document.getElementById("ihead").textContent="Réglages — "+labelOf(type);
+  let h="";
+  if(type==="texte"||type==="titre"){
+    const c=getC(el), al=c.style.textAlign||"left";
+    h+=`<label>Alignement</label><div class="seg" data-ctl="align"><button data-v="left" class="${al==='left'?'on':''}">⬅</button><button data-v="center" class="${al==='center'?'on':''}">↔</button><button data-v="right" class="${al==='right'?'on':''}">➡</button></div>`;
+    h+=`<label>Taille</label><select data-ctl="size"><option value="">Par défaut</option>${SIZES.map(s=>`<option value="${s[1]}" ${s[1]===c.style.fontSize?'selected':''}>${s[0]}</option>`).join("")}</select>`;
+    h+=`<label>Couleur du texte</label><div class="row2"><input type="color" data-ctl="color" value="${toHex(c.style.color)||'#3a2e27'}"><button class="mini" data-ctl="colorReset">Auto</button></div>`;
+    h+=`<label>Style</label><div class="seg"><button data-ctl="bold" class="${(parseInt(c.style.fontWeight)>=600)?'on':''}"><b>B</b></button><button data-ctl="italic" class="${c.style.fontStyle==='italic'?'on':''}"><i>I</i></button></div>`;
+  }
+  if(type==="bouton"){
+    const a=getC(el), j=el.querySelector(".inner").style.justifyContent, cur=j==="center"?"center":j==="flex-end"?"right":"left";
+    const st=a.classList.contains("btn--light")?"light":a.classList.contains("btn--ghost")?"ghost":"plein";
+    h+=`<label>Texte du bouton</label><input type="text" data-ctl="blabel" value="${esc(a.textContent)}">`;
+    h+=`<label>Lien</label><input type="text" data-ctl="bhref" placeholder="page.html ou https://…" value="${esc(a.getAttribute('href'))}">`;
+    h+=`<label>Style</label><select data-ctl="bstyle">${[["plein","Plein"],["light","Clair"],["ghost","Contour"]].map(o=>`<option value="${o[0]}" ${o[0]===st?'selected':''}>${o[1]}</option>`).join("")}</select>`;
+    h+=`<label>Alignement</label><div class="seg" data-ctl="balign"><button data-v="left" class="${cur==='left'?'on':''}">⬅</button><button data-v="center" class="${cur==='center'?'on':''}">↔</button><button data-v="right" class="${cur==='right'?'on':''}">➡</button></div>`;
+  }
+  if(type==="image"){
+    const img=el.querySelector("img");
+    h+=`<label>Lien de l'image (URL)</label><input type="text" data-ctl="isrc" placeholder="https://…" value="${img?esc(img.getAttribute('src')):''}">`;
+    h+=`<label>Texte alternatif</label><input type="text" data-ctl="ialt" value="${img?esc(img.getAttribute('alt')):''}">`;
+    h+=`<label>Remplissage</label><select data-ctl="ifit"><option value="cover" ${img&&img.style.objectFit==='contain'?'':'selected'}>Remplir (couper)</option><option value="contain" ${img&&img.style.objectFit==='contain'?'selected':''}>Entier (sans couper)</option></select>`;
+  }
+  h+=`<label>Couleur de fond du bloc</label><div class="row2"><input type="color" data-ctl="bg" value="${toHex(el.style.backgroundColor)||'#ffffff'}"><button class="mini" data-ctl="bgReset">Aucune</button></div>`;
+  h+=`<label>Disposition</label><div class="seg"><button class="mini" data-ctl="front" style="flex:1">Avancer</button><button class="mini" data-ctl="back" style="flex:1">Reculer</button><button class="mini" data-ctl="dup" style="flex:1">Dupliquer</button></div>`;
+  h+=`<button class="del" data-ctl="del">🗑 Supprimer ce bloc</button>`;
+  body.innerHTML=h;
+  wireInsp(el,type);
+}
+
+function wireInsp(el,type){
+  const body=document.getElementById("inspBody");
+  const q=ctl=>body.querySelector('[data-ctl="'+ctl+'"]');
+  function segWire(ctl,fn){const s=body.querySelector('.seg[data-ctl="'+ctl+'"]');if(!s)return;s.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{s.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));fn(b.dataset.v);}));}
+  const c=getC(el);
+  segWire("align",v=>{c.style.textAlign=v;});
+  if(q("size"))q("size").addEventListener("change",e=>{c.style.fontSize=e.target.value;});
+  if(q("color"))q("color").addEventListener("input",e=>{c.style.color=e.target.value;});
+  if(q("colorReset"))q("colorReset").addEventListener("click",()=>{c.style.color="";buildInsp(el);});
+  const boldBtn=q("bold");if(boldBtn)boldBtn.addEventListener("click",()=>{const on=!(parseInt(c.style.fontWeight)>=600);c.style.fontWeight=on?"700":"400";boldBtn.classList.toggle("on",on);});
+  const itBtn=q("italic");if(itBtn)itBtn.addEventListener("click",()=>{const on=c.style.fontStyle!=="italic";c.style.fontStyle=on?"italic":"normal";itBtn.classList.toggle("on",on);});
+  if(q("blabel"))q("blabel").addEventListener("input",e=>{c.textContent=e.target.value;});
+  if(q("bhref"))q("bhref").addEventListener("input",e=>{c.setAttribute("href",e.target.value||"#");});
+  if(q("bstyle"))q("bstyle").addEventListener("change",e=>{c.classList.remove("btn--light","btn--ghost");if(e.target.value==="light")c.classList.add("btn--light");if(e.target.value==="ghost")c.classList.add("btn--ghost");});
+  segWire("balign",v=>{el.querySelector(".inner").style.justifyContent=v==="center"?"center":v==="right"?"flex-end":"flex-start";});
+  if(q("isrc"))q("isrc").addEventListener("change",e=>{setImg(el,e.target.value.trim());});
+  if(q("ialt"))q("ialt").addEventListener("input",e=>{const im=el.querySelector("img");if(im)im.alt=e.target.value;});
+  if(q("ifit"))q("ifit").addEventListener("change",e=>{const im=el.querySelector("img");if(im)im.style.objectFit=e.target.value;});
+  if(q("bg"))q("bg").addEventListener("input",e=>{el.style.backgroundColor=e.target.value;});
+  if(q("bgReset"))q("bgReset").addEventListener("click",()=>{el.style.backgroundColor="";buildInsp(el);});
+  if(q("front"))q("front").addEventListener("click",()=>{el.style.zIndex=++ZTOP;});
+  if(q("back"))q("back").addEventListener("click",()=>{el.style.zIndex=-(++ZTOP);});
+  if(q("dup"))q("dup").addEventListener("click",()=>dupBlock(el));
+  if(q("del"))q("del").addEventListener("click",()=>{el.remove();select(null);refreshEmpty();});
+}
 
 // glisser depuis la palette
 document.querySelectorAll(".chip").forEach(chip=>{
