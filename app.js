@@ -241,9 +241,14 @@
   function applyLayout(pg) {
     if (!pg) return;
     var orig = origSections();
-    orig.forEach(function (el, i) { el.setAttribute("data-kxorig", i); });
     (pg.hidden || []).forEach(function (sel) { try { [].slice.call(document.querySelectorAll(sel)).forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); }); } catch (e) {} });
     if (pg.layout && pg.layout.length) {
+      // Layout identité (sections d'origine dans le même ordre, sans insertion) : on ne reconstruit
+      // RIEN — on garde le DOM original pour préserver les animations d'apparition au défilement.
+      var hasInsert = pg.layout.some(function (s) { return s.ins != null; });
+      var identity = !hasInsert && pg.layout.length === orig.length && pg.layout.every(function (s, i) { return s.orig === i; });
+      if (identity) return;
+      orig.forEach(function (el, i) { el.setAttribute("data-kxorig", i); });
       var footer = document.querySelector("footer.site-footer") || document.querySelector("footer");
       var parent = footer ? footer.parentNode : document.body;
       var used = {}, frag = document.createDocumentFragment();
@@ -261,6 +266,8 @@
       });
       orig.forEach(function (el, i) { if (!used[i] && el.parentNode) el.parentNode.removeChild(el); });
       if (footer) parent.insertBefore(frag, footer); else document.body.appendChild(frag);
+      // Les sections reconstruites ne sont plus observées par l'animation → on les rend visibles.
+      try { [].slice.call(document.querySelectorAll(".reveal")).forEach(function (el) { el.classList.add("in"); }); } catch (e) {}
     }
   }
   function renderPages(data) { if (data) try { applyLayout(data[pageName()]); } catch (e) {} }
