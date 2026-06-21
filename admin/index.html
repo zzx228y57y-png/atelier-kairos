@@ -274,7 +274,9 @@ function decorate(doc){
   ORIGCACHE=captureOrig(doc);
   applyTheme(doc);
   const st=doc.createElement("style");
-  st.textContent=`.kx-edit{cursor:pointer;transition:background .12s,outline .12s}
+  st.textContent=`.reveal{opacity:1 !important;transform:none !important}
+  .faq__a{max-height:none !important}
+  .kx-edit{cursor:pointer;transition:background .12s,outline .12s}
   .kx-edit:hover{outline:1px dashed rgba(201,122,97,.55);outline-offset:2px;background:rgba(201,122,97,.07)}
   .kx-sel{outline:2px solid #C97A61 !important;background:rgba(201,122,97,.08)}
   [data-edit-bg],[data-edit-src]{cursor:pointer}
