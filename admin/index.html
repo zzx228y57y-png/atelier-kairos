@@ -274,8 +274,8 @@ function decorate(doc){
   ORIGCACHE=captureOrig(doc);
   applyTheme(doc);
   const st=doc.createElement("style");
-  st.textContent=`.kx-edit{outline:1px dashed rgba(201,122,97,.45);outline-offset:2px;cursor:pointer;transition:background .1s}
-  .kx-edit:hover{background:rgba(201,122,97,.10)}
+  st.textContent=`.kx-edit{cursor:pointer;transition:background .12s,outline .12s}
+  .kx-edit:hover{outline:1px dashed rgba(201,122,97,.55);outline-offset:2px;background:rgba(201,122,97,.07)}
   .kx-sel{outline:2px solid #C97A61 !important;background:rgba(201,122,97,.08)}
   [data-edit-bg],[data-edit-src]{cursor:pointer}
   .kx-media:hover{outline:3px solid #C97A61;outline-offset:-3px}
@@ -286,7 +286,7 @@ function decorate(doc){
   .kx-sectool button:hover{background:rgba(255,255,255,.42)}
   .kx-sectag{position:absolute;top:10px;left:10px;background:rgba(107,79,67,.82);color:#fff;font:700 .6rem/1 -apple-system,sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border-radius:6px;display:none;z-index:40}
   .kx-sec:hover>.kx-sectag{display:block}
-  .kx-ins{height:16px;position:relative;display:flex;align-items:center;justify-content:center;z-index:30}
+  .kx-ins{height:7px;position:relative;display:flex;align-items:center;justify-content:center;z-index:30}
   .kx-ins::before{content:"";position:absolute;left:18px;right:18px;top:50%;height:2px;background:rgba(201,122,97,0);transition:background .15s}
   .kx-ins:hover::before{background:rgba(201,122,97,.55)}
   .kx-ins-btn{position:relative;background:#C97A61;color:#fff;border:none;border-radius:50px;font:700 .76rem -apple-system,sans-serif;padding:5px 15px;cursor:pointer;opacity:0;transition:opacity .15s;box-shadow:0 3px 12px rgba(201,122,97,.45)}
