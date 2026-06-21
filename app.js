@@ -14,6 +14,9 @@
   } catch (e) {}
 
   const bust = "?v=" + Date.now(); // évite le cache lors des mises à jour
+  // Ajoute une version aux images du dossier /images pour contourner un cache "image cassée"
+  // (image demandée par le navigateur avant d'être déposée). Bumper iv pour re-rafraîchir.
+  function kxImg(u) { return (typeof u === "string" && u.indexOf("/images/") === 0) ? (u + (u.indexOf("?") >= 0 ? "&" : "?") + "iv=1") : u; }
 
   // ---------- THÈME (couleurs + polices) ----------
   function appliquerTheme(theme) {
@@ -88,12 +91,12 @@
     // Images de fond : <element data-edit-bg="cle">
     document.querySelectorAll("[data-edit-bg]").forEach(function (el) {
       const v = contenu[el.getAttribute("data-edit-bg")];
-      if (typeof v === "string" && v.length) el.style.backgroundImage = "url('" + v + "')";
+      if (typeof v === "string" && v.length) el.style.backgroundImage = "url('" + kxImg(v) + "')";
     });
     // Images <img data-edit-src="cle">
     document.querySelectorAll("[data-edit-src]").forEach(function (el) {
       const v = contenu[el.getAttribute("data-edit-src")];
-      if (typeof v === "string" && v.length) el.setAttribute("src", v);
+      if (typeof v === "string" && v.length) el.setAttribute("src", kxImg(v));
     });
     // Liens <a data-edit-href="cle">
     document.querySelectorAll("[data-edit-href]").forEach(function (el) {
@@ -125,8 +128,8 @@
       if (!el) return;
       var o = page[sel];
       if (typeof o.h === "string") el.innerHTML = o.h;
-      if (o.src) el.setAttribute("src", o.src);
-      if (o.bg) el.style.backgroundImage = "url('" + o.bg + "')";
+      if (o.src) el.setAttribute("src", kxImg(o.src));
+      if (o.bg) el.style.backgroundImage = "url('" + kxImg(o.bg) + "')";
       if (o.s) Object.keys(o.s).forEach(function (k) { try { el.style[k] = o.s[k]; } catch (e) {} });
     });
   }
@@ -198,10 +201,10 @@
     function al(x) { return x ? ("text-align:" + x + ";") : ""; }
     if (t === "heading") { var lvl = (p.level === "h1" ? "h1" : p.level === "h3" ? "h3" : p.level === "h4" ? "h4" : "h2"); var st = al(p.align) + (p.color ? ("color:" + p.color + ";") : "") + (p.size ? ("font-size:" + p.size + ";") : ""); return "<" + lvl + ' class="kx2-h" style="' + st + '">' + (p.html || "Titre") + "</" + lvl + ">"; }
     if (t === "text") { return '<div class="kx2-rt" style="' + al(p.align) + '">' + (p.html || "<p>Votre texte</p>") + "</div>"; }
-    if (t === "image") { var ist = (p.radius ? ("border-radius:" + p.radius + ";") : "") + (p.fit ? ("object-fit:" + p.fit + ";") : "") + (p.ratio ? ("aspect-ratio:" + p.ratio + ";object-fit:cover;") : ""); var img = '<img src="' + kxEsc(p.src || "") + '" alt="' + kxEsc(p.alt || "") + '" style="' + ist + '">'; return p.href ? ('<a href="' + kxEsc(p.href) + '">' + img + "</a>") : img; }
+    if (t === "image") { var ist = (p.radius ? ("border-radius:" + p.radius + ";") : "") + (p.fit ? ("object-fit:" + p.fit + ";") : "") + (p.ratio ? ("aspect-ratio:" + p.ratio + ";object-fit:cover;") : ""); var img = '<img src="' + kxEsc(kxImg(p.src || "")) + '" alt="' + kxEsc(p.alt || "") + '" style="' + ist + '">'; return p.href ? ('<a href="' + kxEsc(p.href) + '">' + img + "</a>") : img; }
     if (t === "button") { var cls = "btn" + (p.style === "light" ? " btn--light" : p.style === "ghost" ? " btn--ghost" : ""); return '<div class="kx2-btnwrap" style="' + al(p.align || "left") + '"><a class="' + cls + '" href="' + kxEsc(p.href || "#") + '">' + kxEsc(p.label || "Bouton") + "</a></div>"; }
     if (t === "video") { var u = p.url || "", src = ""; var y = kxYt(u), v = kxVimeo(u); if (y) src = "https://www.youtube.com/embed/" + y; else if (v) src = "https://player.vimeo.com/video/" + v; else src = u; return src ? ('<div class="kx2-video"><iframe src="' + kxEsc(src) + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>') : ""; }
-    if (t === "gallery") { var imgs = p.images || []; return '<div class="kx2-gallery" style="grid-template-columns:repeat(' + (p.cols || 3) + ',1fr)">' + imgs.map(function (g) { return '<img src="' + kxEsc(g.src || "") + '" alt="' + kxEsc(g.alt || "") + '">'; }).join("") + "</div>"; }
+    if (t === "gallery") { var imgs = p.images || []; return '<div class="kx2-gallery" style="grid-template-columns:repeat(' + (p.cols || 3) + ',1fr)">' + imgs.map(function (g) { return '<img src="' + kxEsc(kxImg(g.src || "")) + '" alt="' + kxEsc(g.alt || "") + '">'; }).join("") + "</div>"; }
     if (t === "quote") { return '<blockquote class="kx2-quote">' + (p.html || "Citation") + (p.author ? ("<cite>" + kxEsc(p.author) + "</cite>") : "") + "</blockquote>"; }
     if (t === "list") { var items = p.items || []; return '<ul class="kx2-list">' + items.map(function (it) { return "<li><span class=\"kx2-ic\">" + kxEsc(it.icon || "✦") + "</span><span>" + (it.text || "") + "</span></li>"; }).join("") + "</ul>"; }
     if (t === "spacer") { return '<div class="kx2-spacer" style="height:' + (p.h || 40) + 'px"></div>'; }
