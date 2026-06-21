@@ -324,7 +324,12 @@ let ORIGCACHE=[];
 function origSectionsEd(doc){return [].slice.call(doc.body.children).filter(el=>{if(!el.tagName)return false;const t=el.tagName;if(t==="HEADER"||t==="FOOTER"||t==="SCRIPT"||t==="STYLE"||t==="LINK")return false;if(el.classList&&(el.classList.contains("site-header")||el.classList.contains("site-footer")||el.classList.contains("kx-ins")||el.classList.contains("kxpal")))return false;return true;});}
 function captureOrig(doc){return origSectionsEd(doc).map(el=>el.cloneNode(true));}
 function pgPage(){const f=pageFile();PG[f]=PG[f]||{};const p=PG[f];if(!p.inserts)p.inserts={};if(!p.hidden)p.hidden=[];return p;}
-function ensureLayout(){const p=pgPage();if(!Array.isArray(p.layout)||!p.layout.length){p.layout=ORIGCACHE.map((_,i)=>({orig:i}));}return p;}
+function ensureLayout(){const p=pgPage();const hasInserts=Array.isArray(p.layout)&&p.layout.some(s=>s.ins!=null);const origCount=Array.isArray(p.layout)?p.layout.filter(s=>s.orig!=null).length:0;
+  // Réconciliation : si le layout est vide, OU s'il n'y a aucun bloc ajouté mais que le nombre
+  // de sections d'origine ne correspond pas (layout périmé), on reconstruit l'ordre complet
+  // pour TOUJOURS refléter toutes les vraies sections de la page.
+  if(!Array.isArray(p.layout)||!p.layout.length||(!hasInserts&&origCount!==ORIGCACHE.length)){p.layout=ORIGCACHE.map((_,i)=>({orig:i}));}
+  return p;}
 
 function kxEsc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function kxYt(u){const m=(u||"").match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{6,})/);return m?m[1]:null;}
