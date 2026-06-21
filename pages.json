@@ -52,35 +52,5 @@
         "orig": 2
       }
     ]
-  },
-  "temoignages.html": {
-    "inserts": {},
-    "hidden": [],
-    "layout": [
-      {
-        "orig": 0
-      },
-      {
-        "orig": 1
-      },
-      {
-        "orig": 2
-      }
-    ]
-  },
-  "faq.html": {
-    "inserts": {},
-    "hidden": [],
-    "layout": [
-      {
-        "orig": 0
-      },
-      {
-        "orig": 1
-      },
-      {
-        "orig": 2
-      }
-    ]
   }
 }
