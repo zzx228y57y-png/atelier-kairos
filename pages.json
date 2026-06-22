@@ -52,5 +52,32 @@
         "orig": 2
       }
     ]
+  },
+  "accompagnements.html": {
+    "inserts": {},
+    "hidden": [],
+    "layout": [
+      {
+        "orig": 0
+      },
+      {
+        "orig": 1
+      },
+      {
+        "orig": 2
+      },
+      {
+        "orig": 3
+      },
+      {
+        "orig": 4
+      },
+      {
+        "orig": 5
+      },
+      {
+        "orig": 6
+      }
+    ]
   }
 }
