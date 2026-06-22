@@ -4,16 +4,22 @@
       "h": "60 €"
     },
     "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > span:nth-of-type(1)": {
-      "h": "&nbsp;XX€"
+      "h": ""
     },
     "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > p:nth-of-type(1)": {
-      "h": "Séance de 1h à 1h15, en présentiel ou en visioconférence.&nbsp;"
+      "h": "Séance de 1h , en présentiel ou en visioconférence.&nbsp;"
     },
     "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > p:nth-of-type(1)": {
-      "h": "Ateliers thématiques en petit groupe. Dates et tarifs communiqués sur demande.&nbsp;"
+      "h": "Constellation&nbsp; en petit groupe.&nbsp;<div>Dates et tarifs communiqués sur demande.&nbsp;</div>"
     },
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > p:nth-of-type(1)": {
       "h": "150 Bd du Montparnasse, 75014<div>Paris</div>"
+    },
+    "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > h3:nth-of-type(1)": {
+      "h": "Constellation familiale"
+    },
+    "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > small:nth-of-type(1)": {
+      "h": "&nbsp;Personnes constellés &amp; Représentants"
     }
   },
   "index.html": {
