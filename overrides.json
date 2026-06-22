@@ -25,10 +25,13 @@
       "h": "Possibilité de paiement par espèces, chèque ou virement."
     },
     "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > span:nth-of-type(2) > a:nth-of-type(1) > span:nth-of-type(1)": {
-      "h": "0685598124"
+      "h": "06 85 59 81 24"
     },
     "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > span:nth-of-type(2) > span:nth-of-type(1)": {
       "h": "150 Bd du Montparnasse, 75014 Paris"
+    },
+    "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > span:nth-of-type(2) > a:nth-of-type(1) > span:nth-of-type(1)": {
+      "h": "dudotsandrine@orange.fr"
     }
   },
   "index.html": {
