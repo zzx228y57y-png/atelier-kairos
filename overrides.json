@@ -19,10 +19,16 @@
       "h": "Constellation familiale"
     },
     "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > small:nth-of-type(1)": {
-      "h": "&nbsp;Personnes constellés &amp; Représentants"
+      "h": "&nbsp;Personnes constellées &amp; Représentants"
     },
     "body > section:nth-of-type(2) > div:nth-of-type(1) > p:nth-of-type(1)": {
       "h": "Possibilité de paiement par espèces, chèque ou virement."
+    },
+    "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > span:nth-of-type(2) > a:nth-of-type(1) > span:nth-of-type(1)": {
+      "h": "0685598124"
+    },
+    "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > span:nth-of-type(2) > span:nth-of-type(1)": {
+      "h": "150 Bd du Montparnasse, 75014 Paris"
     }
   },
   "index.html": {
