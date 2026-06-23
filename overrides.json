@@ -105,5 +105,10 @@
     "body > section:nth-of-type(1) > div:nth-of-type(1)": {
       "bg": "/images/1782227193583_photo.jpg"
     }
+  },
+  "faq.html": {
+    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
+      "bg": "/images/1782231111922_photo.jpg"
+    }
   }
 }
