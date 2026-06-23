@@ -54,7 +54,10 @@
       "bg": "/images/1782145111313_photo.jpg"
     },
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(5) > div:nth-of-type(1)": {
-      "bg": "/images/1782147030383_photo.jpg"
+      "bg": "/images/1782198332223_photo.jpg"
+    },
+    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
+      "bg": "/images/1782198879584_photo.jpg"
     }
   },
   "accompagnements.html": {
@@ -68,7 +71,7 @@
       "src": "/images/1782147634555_photo.jpg"
     },
     "body > section:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782147688326_photo.jpg"
+      "src": "/images/1782198268575_photo.jpg"
     },
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
       "src": "/images/1782147745031_photo.jpg"
