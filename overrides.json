@@ -32,83 +32,20 @@
     },
     "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > span:nth-of-type(2) > a:nth-of-type(1) > span:nth-of-type(1)": {
       "h": "dudotsandrine@orange.fr"
-    },
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782226866839_photo.jpg"
     }
   },
   "index.html": {
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782149702913_photo.jpg"
+      "bg": "/images/1782041972139_photo.jpg"
     },
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(2) > div:nth-of-type(1)": {
-      "bg": "/images/1782149270195_photo.jpg"
+      "bg": "/images/1782041987437_photo.jpg"
     },
     "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(3) > div:nth-of-type(1)": {
       "bg": "/images/1782042011138_photo.jpg"
     },
     "body > section:nth-of-type(1) > div:nth-of-type(3) > h1:nth-of-type(1)": {
-      "h": "Un espace&nbsp; pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme."
-    },
-    "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782144830976_photo.jpg"
-    },
-    "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(4) > div:nth-of-type(1)": {
-      "bg": "/images/1782145111313_photo.jpg"
-    },
-    "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(5) > div:nth-of-type(1)": {
-      "bg": "/images/1782199302472_photo.jpg"
-    },
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782199317464_photo.jpg"
-    },
-    "body > section:nth-of-type(1) > div:nth-of-type(3) > p:nth-of-type(1)": {
-      "s": {
-        "fontWeight": "700"
-      }
-    },
-    "body > header:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1) > span:nth-of-type(1) > span:nth-of-type(2)": {
-      "s": {
-        "fontWeight": "700"
-      }
-    }
-  },
-  "accompagnements.html": {
-    "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782149723353_photo.jpg"
-    },
-    "body > section:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782149741344_photo.jpg"
-    },
-    "body > section:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782147634555_photo.jpg"
-    },
-    "body > section:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782199338828_photo.jpg"
-    },
-    "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > img:nth-of-type(1)": {
-      "src": "/images/1782147745031_photo.jpg"
-    },
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782150130659_photo.jpg"
-    }
-  },
-  "seances.html": {
-    "body > section:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > p:nth-of-type(1)": {
-      "h": "<strong>Durée :</strong> 1h&nbsp; &nbsp;·&nbsp; <strong>Format :</strong> présentiel et/ou visioconférence."
-    },
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782228869192_photo.jpg"
-    }
-  },
-  "temoignages.html": {
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782227193583_photo.jpg"
-    }
-  },
-  "faq.html": {
-    "body > section:nth-of-type(1) > div:nth-of-type(1)": {
-      "bg": "/images/1782231111922_photo.jpg"
+      "h": "TESTespace&nbsp; pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme."
     }
   }
 }
