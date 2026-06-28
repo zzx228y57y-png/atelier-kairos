@@ -275,20 +275,37 @@
   }
   function renderPages(data) { if (data) try { applyLayout(data[pageName()]); } catch (e) {} }
 
+  // ---------- CHARGEMENT DEPUIS CLOUDFLARE ----------
+  // Tout le contenu vient de Cloudflare (/api/site, lu en direct depuis KV).
+  // Repli automatique sur les fichiers statiques si l'API est indisponible,
+  // pour ne JAMAIS casser le site.
+  function chargerSite() {
+    return fetch("/api/site", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+  var SITE = chargerSite();
+
+  function source(data, key, file) {
+    return (data && data[key] && Object.keys(data[key]).length) ? Promise.resolve(data[key]) : charger(file);
+  }
+
+  // Applique le thème le plus tôt possible (évite le clignotement)
+  SITE.then(function (data) { source(data, "theme", "theme.json").then(appliquerTheme); });
+
   function appliquerTout() {
-    charger("content.json").then(appliquerContenu).then(function () {
-      charger("blocks.json").then(function (bl) { if (bl) try { renderBlocks(bl); } catch (e) {} });
-      // On applique le ré-agencement des sections (pages.json) AVANT les overrides :
-      // les sélecteurs des overrides sont calculés par l'éditeur sur la page ré-agencée,
-      // donc le rendu public doit ré-agencer d'abord, puis appliquer les retouches.
-      return charger("pages.json").then(function (pg) { if (pg) try { renderPages(pg); } catch (e) {} });
-    }).then(function () {
-      charger("overrides.json").then(appliquerOverrides);
+    SITE.then(function (data) {
+      source(data, "content", "content.json").then(appliquerContenu).then(function () {
+        source(data, "blocks", "blocks.json").then(function (bl) { if (bl) try { renderBlocks(bl); } catch (e) {} });
+        // On applique le ré-agencement des sections (pages.json) AVANT les overrides :
+        // les sélecteurs des overrides sont calculés par l'éditeur sur la page ré-agencée.
+        return source(data, "pages", "pages.json").then(function (pg) { if (pg) try { renderPages(pg); } catch (e) {} });
+      }).then(function () {
+        source(data, "overrides", "overrides.json").then(appliquerOverrides);
+      });
     });
   }
 
-  // Applique le thème le plus tôt possible, puis le contenu + overrides
-  charger("theme.json").then(appliquerTheme);
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", appliquerTout);
   } else {
