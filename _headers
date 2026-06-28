@@ -1,0 +1,6 @@
+# Le moteur du site doit toujours être à jour : on revalide à chaque chargement
+# (sinon un ancien app.js en cache lit les vieux fichiers au lieu de Cloudflare KV).
+/app.js
+  Cache-Control: no-cache
+/script.js
+  Cache-Control: no-cache
