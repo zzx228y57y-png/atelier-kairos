@@ -218,11 +218,14 @@ function toast(m,t,l){const e=$("toast");e.className="toast show "+(t||"");e.inn
 
 async function boot(){
   const b="?v="+Date.now();
-  try{CONTENT=await (await fetch("/content.json"+b)).json();}catch(e){CONTENT={};}
-  try{THEME=await (await fetch("/theme.json"+b)).json();}catch(e){THEME={};}
-  try{OVR=await (await fetch("/overrides.json"+b)).json();}catch(e){OVR={};}
-  try{BLOCKS=await (await fetch("/blocks.json"+b)).json();}catch(e){BLOCKS={};}
-  try{PG=await (await fetch("/pages.json"+b)).json();}catch(e){PG={};}
+  // Lit tout le contenu depuis Cloudflare (/api/site), avec repli sur les fichiers statiques.
+  let S={}; try{ S=await (await fetch("/api/site",{cache:"no-store"})).json(); }catch(e){ S={}; }
+  async function pick(key,file){ if(S&&S[key]&&Object.keys(S[key]).length) return S[key]; try{ return await (await fetch(file+b)).json(); }catch(e){ return {}; } }
+  CONTENT=await pick("content","/content.json");
+  THEME=await pick("theme","/theme.json");
+  OVR=await pick("overrides","/overrides.json");
+  BLOCKS=await pick("blocks","/blocks.json");
+  PG=await pick("pages","/pages.json");
   BASE=snap();history=[];lastChangeKey=null;$("undoBtn").disabled=true;
   try{const d=JSON.parse(localStorage.getItem(DRAFT)||"null");if(d&&JSON.stringify({o:d.o,t:d.t,b:d.b,p:d.p})!==snap()){if(confirm("Des modifications non publiées (brouillon) existent. Les restaurer ?")){OVR=d.o;THEME=d.t;BLOCKS=d.b||{};PG=d.p||{};pendingImages=d.imgs||[];markDirty();}else localStorage.removeItem(DRAFT);}}catch(e){}
   renderPages();buildDesign();$("cFont").innerHTML='<option value="">Automatique</option>'+FONTS.map(f=>`<option>${f}</option>`).join("");
@@ -543,7 +546,15 @@ function renderTo(ctx,W,H,k){const s=coverScale(W,H)*CROP.scale;ctx.save();ctx.t
 function sizeCrop(){const cv=$("cropCv"),maxW=390,maxH=300;let w=maxW,h=w/CROP.ratio;if(h>maxH){h=maxH;w=h*CROP.ratio;}const dpr=window.devicePixelRatio||1;cv.style.width=w+"px";cv.style.height=h+"px";cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);CROP.dpr=dpr;CROP.w=w;CROP.h=h;}
 function drawCrop(){clampPan();const cv=$("cropCv"),ctx=cv.getContext("2d");ctx.clearRect(0,0,cv.width,cv.height);renderTo(ctx,CROP.w,CROP.h,CROP.dpr);}
 function setRatioBtn(r){document.querySelectorAll("#cropRatios button").forEach(b=>b.classList.toggle("on",b.dataset.r===r));}
-function applyCrop(){clampPan();const ratio=CROP.ratio,long=1600;let oW,oH;if(ratio>=1){oW=long;oH=Math.round(long/ratio);}else{oH=long;oW=Math.round(long*ratio);}const oc=document.createElement("canvas");oc.width=oW;oc.height=oH;renderTo(oc.getContext("2d"),CROP.w,CROP.h,oW/CROP.w);let url;try{url=oc.toDataURL("image/jpeg",.9);}catch(e){alert("Recadrage impossible (protection de l'image externe) : appliquée telle quelle.");applyImg(CROP_src);return;}const safe=Date.now()+"_photo.jpg";pendingImages.push({name:safe,data:url.split(",")[1],mime:"image/jpeg"});applyImg("/images/"+safe,url);}
+function applyCrop(){clampPan();const ratio=CROP.ratio,long=1600;let oW,oH;if(ratio>=1){oW=long;oH=Math.round(long/ratio);}else{oH=long;oW=Math.round(long*ratio);}const oc=document.createElement("canvas");oc.width=oW;oc.height=oH;renderTo(oc.getContext("2d"),CROP.w,CROP.h,oW/CROP.w);let url;try{url=oc.toDataURL("image/jpeg",.9);}catch(e){alert("Recadrage impossible (protection de l'image externe) : appliquée telle quelle.");applyImg(CROP_src);return;}const safe=Date.now()+"_photo.jpg";uploadPhoto(safe,url.split(",")[1],"image/jpeg",url);}
+// Envoie la photo directement sur Cloudflare R2, puis l'applique (aperçu instantané via l'image locale).
+function uploadPhoto(name,b64,mime,previewUrl){
+  toast("Envoi de la photo sur Cloudflare…");try{$("imgModal").classList.remove("open");}catch(e){}
+  fetch("/admin/api/upload",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name:name,dataBase64:b64,contentType:mime})})
+    .then(r=>{const ct=r.headers.get("content-type")||"";if(ct.indexOf("application/json")<0)throw new Error("Session expirée — recharge la page (Cmd+R).");return r.json();})
+    .then(j=>{if(j&&j.ok){applyImg(j.url,previewUrl);toast("✓ Photo enregistrée");}else{toast("Erreur photo : "+((j&&j.error)||"inconnue"),"err");}})
+    .catch(e=>toast("Erreur photo : "+e.message,"err"));
+}
 $("cropZoom").addEventListener("input",()=>{CROP.scale=parseFloat($("cropZoom").value);drawCrop();});
 $("cropRotR").addEventListener("click",()=>{CROP.rot=(CROP.rot+90)%360;drawCrop();});
 $("cropRatios").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;setRatioBtn(b.dataset.r);CROP.ratio=b.dataset.r==="auto"?CROP.auto:parseFloat(b.dataset.r);sizeCrop();drawCrop();});
@@ -552,10 +563,12 @@ $("cropApply").addEventListener("click",applyCrop);
 (function(){let drag=false,lx=0,ly=0;const cv=$("cropCv");cv.addEventListener("pointerdown",e=>{drag=true;lx=e.clientX;ly=e.clientY;cv.classList.add("drag");cv.setPointerCapture(e.pointerId);});cv.addEventListener("pointermove",e=>{if(!drag||!CROP)return;CROP.panX+=e.clientX-lx;CROP.panY+=e.clientY-ly;lx=e.clientX;ly=e.clientY;drawCrop();});cv.addEventListener("pointerup",e=>{drag=false;cv.classList.remove("drag");});cv.addEventListener("pointercancel",()=>{drag=false;cv.classList.remove("drag");});cv.addEventListener("wheel",e=>{if(!CROP)return;e.preventDefault();CROP.scale=Math.max(1,Math.min(4,CROP.scale*(e.deltaY<0?1.06:0.94)));$("cropZoom").value=CROP.scale;drawCrop();},{passive:false});})();
 
 async function publish(){if(!dirty)return;const b=$("pubBtn");b.disabled=true;b.textContent="Publication…";$("saveState").textContent="Publication…";
-  try{const r=await fetch("/admin/api/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({overrides:OVR,theme:THEME,blocks:BLOCKS,pages:PG,images:pendingImages.map(i=>({name:i.name,data:i.data}))})});const j=await r.json();
-    if(j.ok){pendingImages=[];history=[];BASE=snap();lastChangeKey=null;$("undoBtn").disabled=true;clean();toast("✓ Publié"+(j.backup?" — sauvegarde "+j.backup+" créée":"")+" ! Mise à jour dans 1–2 min.","ok",' <a href="/" target="_blank">Voir le site</a>');}
+  try{const r=await fetch("/admin/api/save",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({content:CONTENT,theme:THEME,overrides:OVR,pages:PG,blocks:BLOCKS})});
+    const ct=r.headers.get("content-type")||"";if(ct.indexOf("application/json")<0){throw new Error("Session expirée — recharge la page (Cmd+R) puis reconnecte-toi.");}
+    const j=await r.json();
+    if(j.ok){pendingImages=[];history=[];BASE=snap();lastChangeKey=null;$("undoBtn").disabled=true;clean();toast("✓ Publié ! Visible en ligne dans quelques secondes.","ok",' <a href="/" target="_blank">Voir le site</a>');}
     else{toast("Erreur : "+(j.error||"inconnue"),"err");markDirty();}
-  }catch(e){toast("Erreur réseau : "+e.message,"err");markDirty();}}
+  }catch(e){toast("Erreur : "+e.message,"err");markDirty();}}
 $("pubBtn").addEventListener("click",publish);
 window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue="";}});
 boot();
