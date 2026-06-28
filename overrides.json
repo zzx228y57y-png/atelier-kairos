@@ -46,6 +46,9 @@
     },
     "body > section:nth-of-type(1) > div:nth-of-type(3) > h1:nth-of-type(1)": {
       "h": "TESTespace&nbsp; pour déposer ce qui pèse, retrouver votre équilibre et avancer à votre rythme."
+    },
+    "body > section:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > article:nth-of-type(4) > div:nth-of-type(1)": {
+      "bg": "/images/1782662030471_photo.jpg"
     }
   }
 }
