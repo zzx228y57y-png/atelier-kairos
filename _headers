@@ -4,3 +4,5 @@
   Cache-Control: no-cache
 /script.js
   Cache-Control: no-cache
+/styles.css
+  Cache-Control: no-cache
